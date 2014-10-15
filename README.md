@@ -1,5 +1,4 @@
-Ezeedo
-======
+# Ezeedo
 
 A todo.txt app for the GNOME desktop
 
