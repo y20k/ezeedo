@@ -1,6 +1,0 @@
-# Ezeedo
-
-A todo.txt app for the GNOME desktop
-
-Learn more about Ezeedo on
-http://www.y20k.org/ezeedo/
