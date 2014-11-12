@@ -27,3 +27,17 @@
 *.i*86
 *.x86_64
 *.hex
+
+# Project-specific
+*~
+*.in
+*.cache
+ChangeLog
+compile
+configure
+Debug
+depcomp
+install-sh
+missing
+*.anjuta
+aclocal.m4
