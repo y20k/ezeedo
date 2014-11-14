@@ -1,4 +1,11 @@
 -----------------------------------------------------------------------
+Ezeedo 0.1 - 14 November 2014
+-----------------------------------------------------------------------
+- Converted the whole project to Anjuta and Autotools 
+- Restructured the source code
+- Deleted and resubmitted the whole project to Github
+
+-----------------------------------------------------------------------
 Ezeedo 0.1 - 15 October 2014
 -----------------------------------------------------------------------
 - Created this document
