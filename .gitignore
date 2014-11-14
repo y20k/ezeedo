@@ -29,6 +29,7 @@
 *.hex
 
 # Project-specific
+\#*
 .anjuta
 .DS_Store
 *~
