@@ -29,9 +29,14 @@
 *.hex
 
 # Project-specific
+.anjuta
+.DS_Store
 *~
-*.in
+*.anjuta
 *.cache
+*.db
+*.in
+aclocal.m4
 ChangeLog
 compile
 configure
@@ -39,5 +44,3 @@ Debug
 depcomp
 install-sh
 missing
-*.anjuta
-aclocal.m4
