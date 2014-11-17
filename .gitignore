@@ -37,6 +37,7 @@
 *.cache
 *.db
 *.in
+*.zip
 aclocal.m4
 ChangeLog
 compile
