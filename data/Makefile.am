@@ -4,10 +4,6 @@
 SUBDIRS = \
 	icons
 
-gsettings_SCHEMAS = org.y20k.ezeedo.gschema.xml
-
-@GSETTINGS_RULES@
-
 desktopdir = $(datadir)/applications
 desktop_in_files = ezeedo.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
@@ -19,4 +15,9 @@ install-data-hook:
 
 uninstall-hook: 
 	$(UPDATE_DESKTOP)
+
+settingsdir = /usr/share/glib-2.0/schemas
+settings_in_files = org.y20k.ezeedo.gschema.xml.in
+settings_DATA = $(settings_in_files:.xml.in=.xml)
+@GSETTINGS_RULES@
 
