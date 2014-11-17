@@ -27,7 +27,7 @@
 /**
  * Shows simple information dialog with given text
  */
-void show_info_dialog (GtkWidget *widget, gchar *dialog_message);
+void show_info_dialog (GtkWidget *widget, gpointer user_data);
 
 /**
  * Ask user for location of todo.txt file

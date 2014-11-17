@@ -23,8 +23,11 @@
 /**
  * Shows simple information dialog with given text
  */
-void show_info_dialog (GtkWidget *widget, gchar *dialog_message)
+void show_info_dialog (GtkWidget *widget, gpointer user_data)
 {
+    gchar *dialog_message;
+    dialog_message = user_data;
+        
     // get toplevel window
     GtkWidget *toplevel;
     toplevel = gtk_widget_get_toplevel (widget);
@@ -34,7 +37,7 @@ void show_info_dialog (GtkWidget *widget, gchar *dialog_message)
         GtkDialogFlags flags;
 
         flags = GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT;
-        dialog = gtk_message_dialog_new (GTK_WINDOW(toplevel), flags, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", dialog_message);
+        dialog = gtk_message_dialog_new (GTK_WINDOW(toplevel), flags, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, "%s", dialog_message);
 
         gtk_dialog_run (GTK_DIALOG (dialog));
         gtk_widget_destroy (dialog);

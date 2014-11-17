@@ -195,6 +195,9 @@ void activate (GtkApplication* app, gpointer user_data)
     // detect entry signal
     g_signal_connect (task_entry, "activate", G_CALLBACK (add_task_entry), ezeedo);
 
+    // detect archive button pressed
+    g_signal_connect (archive_button, "clicked", G_CALLBACK (show_info_dialog), "Task archival is not supported yet.");
+    
     // detect window close
     g_signal_connect (G_OBJECT (window), "delete-event", G_CALLBACK (close_window), app);
 
