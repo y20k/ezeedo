@@ -311,6 +311,7 @@ void startup (GApplication *app, gpointer user_data)
 {
     // define widgets
     GMenu* menu;
+    GMenu* section;
 
     // define actions
     GSimpleAction* preferences_action;
@@ -319,11 +320,14 @@ void startup (GApplication *app, gpointer user_data)
     // create application menu
     menu = g_menu_new ();
 
-    // TODO https://wiki.gnome.org/HowDoI/ApplicationMenu
+    // create section
+    section = g_menu_new ();
 
+    // contruct application menu
+    g_menu_append (section, "About", "win.about");
+    g_menu_append (section, "Quit", "app.quit");
     g_menu_append (menu, "Preferences", "app.preferences");
-    g_menu_append (menu, "About", "win.about");
-    g_menu_append (menu, "Quit", "app.quit");
+    g_menu_append_section (menu, NULL, G_MENU_MODEL (section));
 
     // create actions
     preferences_action = g_simple_action_new ("preferences", NULL);
