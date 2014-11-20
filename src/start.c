@@ -1,7 +1,7 @@
 /****************************************************************************
  * -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*-
  *
- * startup.c
+ * start.c
  * Implements functions used by the main loop 
  *
  * Ezeedo
@@ -17,7 +17,7 @@
 // DEBUG: valgrind --leak-check=full --track-origins=yes -v ./ezeedo
 
 
-#include "startup.h"
+#include "start.h"
 
 #include "categorylist.h"
 #include "helpers.h"
@@ -260,6 +260,8 @@ void activate (GtkApplication* app, gpointer user_data)
 
 
     // create and display todo categories widget
+    // TODO: rework Contexts and Projects as GtkSidebar / GtkStack for GTK+ 3.16 (April 2015)
+    // http://fossies.org/linux/misc/gtk+-3.15.1.tar.gz/gtk+-3.15.1/docs/reference/gtk/html/GtkSidebar.html
     todo_contexts = display_category (context_list, "Contexts");
     todo_projects = display_category (project_list, "Projects");
     gtk_widget_set_margin_top (GTK_WIDGET (todo_projects), 20);

@@ -19,7 +19,7 @@
 
 #include "preferences.h"
 #include "helpers.h"
-#include "startup.h"
+#include "start.h"
 
 
 /**

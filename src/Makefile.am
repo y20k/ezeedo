@@ -30,12 +30,12 @@ ezeedo_SOURCES = \
 	helpers.h \
 	preferences.c \
 	preferences.h \
-	startup.c \
-	startup.h \
 	taskentry.c \
 	taskentry.h \
 	tasklist.c \
-	tasklist.h	
+	tasklist.h \
+	start.c \
+	start.h	
 
 
 ezeedo_LDFLAGS = \

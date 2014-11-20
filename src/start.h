@@ -1,7 +1,7 @@
 /****************************************************************************
  * -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*-
  *
- * startup.h
+ * start.h
  * Declares functions used by the main loop 
  *
  * Ezeedo
@@ -17,8 +17,8 @@
 // DEBUG: valgrind --leak-check=full --track-origins=yes -v ./ezeedo
 
 
-#ifndef STARTUP_H
-#define STARTUP_H
+#ifndef START_H
+#define START_H
 
 
 #include "core.h"
@@ -40,4 +40,4 @@ void startup(GApplication *app, gpointer user_data);
 void show_about_window (GSimpleAction *simple, GVariant *parameter, gpointer user_data);
 
 
-#endif // STARTUP_H
+#endif // START_H
