@@ -196,7 +196,7 @@ void activate (GtkApplication* app, gpointer user_data)
     g_signal_connect (task_entry, "activate", G_CALLBACK (add_task_entry), ezeedo);
 
     // detect archive button pressed
-    g_signal_connect (archive_button, "clicked", G_CALLBACK (show_info_dialog), "Task archival is not supported yet.");
+    g_signal_connect (archive_button, "clicked", G_CALLBACK (display_info_dialog), "Task archival is not supported yet.");
     
     // detect window close
     g_signal_connect (G_OBJECT (window), "delete-event", G_CALLBACK (close_window), app);
@@ -247,14 +247,20 @@ void activate (GtkApplication* app, gpointer user_data)
     bool file_loaded = load_tasklist_file(todotxt_file, main_textlist);
     if (!file_loaded)
     {
-        show_info_dialog(GTK_WIDGET(window), "Could not load file.");
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Could not load file:\n%s", todotxt_file);
+        show_info(GTK_WIDGET(window), text, true);
+        select_and_save_file (NULL, GTK_APPLICATION(app));
     }
 
     // parse the raw textlist and load it into the main tasklist and sort it
     bool textlist_parsed = parse_textlist(main_textlist, main_tasklist, context_list, project_list);
     if (!textlist_parsed)
     {
-        show_info_dialog(GTK_WIDGET(window), "Could not parse file.");
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Could not parse file:\n%s", todotxt_file);
+        show_info(GTK_WIDGET(window), text, true);
+        select_and_save_file (NULL, GTK_APPLICATION(app));
     }
     sort_tasklist(main_tasklist);
 

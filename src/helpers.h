@@ -23,11 +23,15 @@
 
 #include "core.h"
 
+/**
+ * Shows line of text within dialog window or in terminal
+ */
+void show_info (GtkWidget *widget, gchar *text, gboolean dialog_window);
 
 /**
- * Shows simple information dialog with given text
+ * Display simple information dialog with given text
  */
-void show_info_dialog (GtkWidget *widget, gpointer user_data);
+void display_info_dialog (GtkWidget *widget, gpointer user_data);
 
 /**
  * Ask user for location of todo.txt file

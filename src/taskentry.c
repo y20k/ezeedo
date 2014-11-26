@@ -36,18 +36,20 @@ void add_task_entry (GtkEntry *entry, gpointer user_data)
 
     // add line to textlist
     bool line_added = add_line_to_textlist(input, ezeedo->textlist);
-    // TODO remove
     if (!line_added)
     {
-        g_print("Could not add line to textlist:\n%s\n", input);
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Could not add input to textlist.\n%s", input);
+        show_info(NULL, text, FALSE);
     }
 
     // add line to tasklist
     bool task_added = add_task_to_tasklist(input, ezeedo->tasklist, ezeedo->context_list, ezeedo->project_list);
-    // TODO remove
     if (!task_added)
     {
-        g_print("Could not add line to tasklist:\n%s\n", input);
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Could not add input to tasklist.\n%s", input);
+        show_info(NULL, text, FALSE);
     }
 
     // sort tasklist

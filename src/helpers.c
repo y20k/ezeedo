@@ -21,9 +21,25 @@
 
 
 /**
- * Shows simple information dialog with given text
+ * Shows line of text within dialog window or in terminal
  */
-void show_info_dialog (GtkWidget *widget, gpointer user_data)
+void show_info (GtkWidget *widget, gchar *text,  gboolean dialog_window)
+{
+    if (dialog_window && widget != NULL)
+    {
+        display_info_dialog (widget, text);
+    }
+    else
+    {
+        g_print ("Ezeedo: %s\n", text);
+    }
+}
+
+
+/**
+ * Display simple information dialog with given text
+ */
+void display_info_dialog (GtkWidget *widget, gpointer user_data)
 {
     gchar *dialog_message;
     dialog_message = user_data;
@@ -165,7 +181,7 @@ void quit_application (GSimpleAction *simple, GVariant *parameter, gpointer user
     GApplication *app;
     GtkWindow    *win;
 
-    // debugging
+    // TODO remove debugging g_print
     g_print ("Quit on quit\n");
 
     app = user_data;
@@ -185,7 +201,7 @@ void close_window (GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
     GApplication *app;
 
-    // debugging
+    // TODO remove debugging g_print
     g_print ("Quit on close\n");
 
     app = user_data;
@@ -281,14 +297,16 @@ void task_singleclicked (GtkWidget *widget)
     GtkTreeModel *model;
     GtkTreeIter  iter;
 
+    // TODO remove debugging g_print
     g_print ("A row has been single-clicked!\n");
-
+    
     // get the input
     if (gtk_tree_selection_get_selected (GTK_TREE_SELECTION (widget), &model, &iter))
     {
-       gchar *name;
-       gtk_tree_model_get (model, &iter, 3, &name, -1);
-       g_print ("Single-clicked row contains name %s\n", name);
-       g_free (name);
+        gchar *name;
+        gtk_tree_model_get (model, &iter, 3, &name, -1);
+        // TODO remove debugging g_print
+        g_print ("Single-clicked row contains name %s\n", name);
+        g_free (name);
     }
 }

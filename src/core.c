@@ -18,6 +18,8 @@
 
 
 #include "core.h"
+#include "helpers.h"
+
 
 
 /**
@@ -27,7 +29,9 @@ bool load_tasklist_file (const char* tasklist_file, textlist_container* textlist
 {
     if (strlen(tasklist_file) > TODOTXTFILELENGTH)
     {
-        printf("Path and filename longer than %d characters:n%s\n", TODOTXTFILELENGTH, tasklist_file);
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Path and filename longer than %d characters", TODOTXTFILELENGTH);
+        show_info(NULL, text, FALSE);
         return false;
     }
 
@@ -37,12 +41,16 @@ bool load_tasklist_file (const char* tasklist_file, textlist_container* textlist
     // check for successful open
     if (fp == NULL)
     {
-        printf("Could not open %s\n", tasklist_file);
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Could not open %s", tasklist_file);
+        show_info(NULL, text, FALSE);
         return false;
     }
     else
     {
-        printf("Sucessfully opened %s\n", tasklist_file);
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Sucessfully opened %s", tasklist_file);
+        show_info(NULL, text, FALSE);
     }
 
     // initialize some variables
@@ -64,7 +72,9 @@ bool load_tasklist_file (const char* tasklist_file, textlist_container* textlist
             // handle task too long
             if (new_line->line_length > TASKLENGTH)
             {
-                printf ("Unable to read tasks longer than %d characters.\n", TASKLENGTH);
+                char text[INFODIALOGLENGTH];
+                snprintf(text, INFODIALOGLENGTH,"Unable to read tasks longer than %d characters.", TASKLENGTH);
+                show_info(NULL, text, FALSE);
                 fclose(fp);
                 return false;
             }
@@ -124,7 +134,9 @@ bool parse_textlist(textlist_container* textlist,
         bool added = add_task_to_tasklist(textlist->line[i]->raw_line, tasklist, context_list, project_list);
         if (!added)
         {
-            printf("Could not add line to tasklist:\n%s\n", textlist->line[i]->raw_line);
+            char text[INFODIALOGLENGTH];
+            snprintf(text, INFODIALOGLENGTH,"Could not add line no. %d to tasklist.", i);
+            show_info(NULL, text, FALSE);
             return false;
         }
     }
@@ -142,7 +154,9 @@ bool add_line_to_textlist(const char* line, textlist_container* textlist)
     // check the length of given line
     if (strlen(line) > TASKLENGTH)
     {
-        printf ("Unable to write tasks longer than %d characters.\n", TASKLENGTH);
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Unable to write tasks longer than %d characters.", TASKLENGTH);
+        show_info(NULL, text, FALSE);
         return false;
     }
 
@@ -176,12 +190,16 @@ bool save_textlist_to_file(textlist_container* textlist, const char* tasklist_fi
     // check for successful open
     if (fp == NULL)
     {
-        printf("Could not open %s\n", tasklist_file);
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Could not open %s.", tasklist_file);
+        show_info(NULL, text, FALSE);
         return false;
     }
     else
     {
-        printf("Sucessfully opened %s\n", tasklist_file);
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Sucessfully opened %s.", tasklist_file);
+        show_info(NULL, text, FALSE);
     }
 
     // for each line
@@ -229,7 +247,9 @@ bool add_task_to_tasklist(const char* line, tasklist_container* tasklist,
     bool task_created = create_new_task(line, new_task, context_list, project_list);
     if (!task_created)
     {
-        printf("Could not create task from input:\n%s\n", line);
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Could not create task from given input\n%s", line);
+        show_info(NULL, text, FALSE);
         return false;
     }
 
@@ -261,8 +281,9 @@ bool create_new_task(const char* line, task* new_task,
     {
         if (word_character_counter >= WORDLENGTH)
         {
-            printf("Cannot load the word %s because ", word);
-            printf("it is longer than %d characters.\n", WORDLENGTH);
+            char text[INFODIALOGLENGTH];
+            snprintf(text, INFODIALOGLENGTH,"Word is longer than %d characters\n%s", WORDLENGTH, line);
+            show_info(NULL, text, FALSE);
             return false;
         }
 
@@ -762,98 +783,3 @@ bool unload_category_list(category_container* category_list)
 
     return true;
 }
-
-
-/**
- * Prints given tasklist memory using printf
- */
-void print_tasklist(tasklist_container* tasklist,
-                    category_container* context_list,
-                    category_container* project_list)
-{
-    printf("------------------------------------------\n");
-    printf("            My Todo List\n");
-    printf("            %2d tasks\n", tasklist->number_of_tasks);
-    printf("            %2d contexts\n", context_list->number_of_categories);
-    printf("            %2d projects\n", project_list->number_of_categories);
-    printf("------------------------------------------\n");
-
-    // print tasks
-    printf("No / ID / done / prio / ctxt / prjt / task\n");
-    printf("------------------------------------------\n");
-
-    for (int i = 0; i < tasklist->number_of_tasks; i++)
-    {
-        if (!(tasklist->list[i]->deleted))
-        {
-            // print number
-            printf("%2d / ", i);
-
-            // print id
-            printf("%2d / ", tasklist->list[i]->id);
-
-            // print completed
-            if (tasklist->list[i]->completed)
-            {
-                printf(" x   / ");
-            }
-            else
-            {
-                printf("     / ");
-            }
-
-            // print priority
-            if (tasklist->list[i]->priority == 0)
-            {
-                printf("     / ");
-            }
-            else
-            {
-                printf("  %c  / ", tasklist->list[i]->priority);
-            }
-
-            // print context
-            if (tasklist->list[i]->number_of_contexts == 0)
-            {
-                printf("     / ");
-            }
-            else
-            {
-                printf(" %2d  / ", tasklist->list[i]->context[0]);
-            }
-
-            // print project
-            if (tasklist->list[i]->number_of_projects == 0)
-            {
-                printf("     / ");
-            }
-            else
-            {
-                printf(" %2d  / ", tasklist->list[i]->project[0]);
-            }
-
-            // print description
-            printf("%s\n", tasklist->list[i]->description);
-        }
-
-    }
-    // print contexts
-    printf("------------\n");
-    printf("ID / context\n");
-    printf("------------\n");
-    for (int i = 0; i < context_list->number_of_categories; i++)
-    {
-        printf ("%2d / %s\n", context_list->list[i]->id, context_list->list[i]->title);
-    }
-
-    // print projects
-    printf("------------\n");
-    printf("ID / project\n");
-    printf("------------\n");
-    for (int i = 0; i < project_list->number_of_categories; i++)
-    {
-        printf ("%2d / %s\n", project_list->list[i]->id, project_list->list[i]->title);
-    }
-
-}
-

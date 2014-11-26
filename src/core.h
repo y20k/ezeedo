@@ -38,11 +38,15 @@
 #define TODOTXTFILELENGTH 255
 // maximum length for word
 #define WORDLENGTH 45
+
 // location of logo
 #define EZEEDOICON "ezeedo"
+// length of info dialog message
+#define INFODIALOGLENGTH 80
+
 
 // TODO (remove) location of toto.txt file
-#define TODOTXTFILE '/home/solaris/Documents/toto.txt'
+// #define TODOTXTFILE '/home/solaris/Documents/toto.txt'
 
 
 enum
