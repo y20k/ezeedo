@@ -38,6 +38,7 @@
 *.db
 *.in
 *.zip
+todo.txt
 aclocal.m4
 ChangeLog
 compile
@@ -46,3 +47,4 @@ Debug
 depcomp
 install-sh
 missing
+todo.txt
