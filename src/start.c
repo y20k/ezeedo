@@ -290,19 +290,17 @@ void activate (GtkApplication* app, gpointer user_data)
     gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter_done), TASK_COMPLETED );
 
     // create and display todolist widget
-    todolist = display_tasklist (FALSE, GTK_TREE_MODEL(filter_todo), main_tasklist, context_list, project_list);
+    todolist = display_tasklist (FALSE, GTK_TREE_MODEL(filter_todo));
     gtk_container_add (GTK_CONTAINER (todolist_container_scrolled), todolist);
     gtk_widget_show_all (todolist_container_scrolled);
 
     // create and display donelist widget
-    donelist = display_tasklist (TRUE, GTK_TREE_MODEL(filter_done), main_tasklist, context_list, project_list);
+    donelist = display_tasklist (TRUE, GTK_TREE_MODEL(filter_done));
     gtk_container_add (GTK_CONTAINER (donelist_container_scrolled), donelist);
     gtk_widget_show_all (donelist_container_scrolled);
 
-
-
-    // Here be dragons ... detect double-click
-    g_signal_connect (todolist, "row-activated", G_CALLBACK(task_doubleclicked), GTK_LIST_STORE(tasks_store));
+    // detect double-click
+    g_signal_connect (todolist, "row-activated", G_CALLBACK(task_doubleclicked), ezeedo);
 
     // Here be dragons ... detect single-click
     GtkTreeSelection *selection;
@@ -332,23 +330,23 @@ void startup (GApplication *app, gpointer user_data)
     section = g_menu_new ();
 
     // contruct application menu
-    g_menu_append (section, "About", "win.about");
-    g_menu_append (section, "Quit", "app.quit");
-    g_menu_append (menu, "Preferences", "app.preferences");
+    g_menu_append         (section, "About", "win.about");
+    g_menu_append         (section, "Quit", "app.quit");
+    g_menu_append         (menu, "Preferences", "app.preferences");
     g_menu_append_section (menu, NULL, G_MENU_MODEL (section));
 
     // create actions
     preferences_action = g_simple_action_new ("preferences", NULL);
-    g_signal_connect (preferences_action, "activate", G_CALLBACK (show_preferences_dialog), app);
+    g_signal_connect (preferences_action, "activate", G_CALLBACK(show_preferences_dialog), app);
     g_action_map_add_action (G_ACTION_MAP (app), G_ACTION (preferences_action));
 
     // activate ctrl-q
     const gchar* quit_accels[2] = { "<Ctrl>Q", NULL };
-    gtk_application_set_accels_for_action (GTK_APPLICATION (app), "app.quit", quit_accels);
+    gtk_application_set_accels_for_action (GTK_APPLICATION(app), "app.quit", quit_accels);
 
     quit_action = g_simple_action_new ("quit", NULL);
-    g_signal_connect (quit_action, "activate", G_CALLBACK (quit_application), app);
-    g_action_map_add_action (G_ACTION_MAP (app), G_ACTION (quit_action));
+    g_signal_connect        (quit_action, "activate", G_CALLBACK(quit_application), app);
+    g_action_map_add_action (G_ACTION_MAP(app), G_ACTION(quit_action));
 
     // Set menu for the overall application
     gtk_application_set_app_menu (GTK_APPLICATION (app), G_MENU_MODEL (menu));

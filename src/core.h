@@ -244,6 +244,12 @@ bool compare_current_to_next (task* current_task, task* next_task);
 
 
 /**
+ * Marks given task as done in textlist and tasklist
+ */
+bool mark_task_done(const int id, textlist_container* textlist, tasklist_container* tasklist);
+
+
+/**
  * Deletes task from textlist marks task deleted in tasklist
  */
 bool delete_task(const int id, textlist_container* textlist, tasklist_container* tasklist);

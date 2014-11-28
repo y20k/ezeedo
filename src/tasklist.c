@@ -23,7 +23,8 @@
 /**
  * Creates widget containing tasklist
  */
-GtkWidget *display_tasklist (gboolean done, GtkTreeModel *model, tasklist_container* main_tasklist, category_container* context_list, category_container* project_list)
+// GtkWidget *display_tasklist (gboolean done, GtkTreeModel *model, tasklist_container* main_tasklist, category_container* context_list, category_container* project_list)
+GtkWidget *display_tasklist (gboolean done, GtkTreeModel *model)
 {
     GtkWidget *view; 
     // GtkListStore *tasks_store;
@@ -92,15 +93,7 @@ void *fill_tasks_store (ezeedo_wrapper_structure* ezeedo)
 {
 
     GtkListStore *tasks_store;
-    tasks_store = gtk_list_store_new (TASK_COLUMNS,   // total number of colums
-                                      G_TYPE_INT,     // id
-                                      G_TYPE_BOOLEAN, // completed
-                                      G_TYPE_BOOLEAN, // notcompleted
-                                      G_TYPE_STRING,  // priority
-                                      G_TYPE_STRING,  // description
-                                      G_TYPE_STRING,  // context
-                                      G_TYPE_STRING); // project
-
+    tasks_store = create_tasks_store ();
 
     // create iterator
     GtkTreeIter iter;

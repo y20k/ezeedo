@@ -696,6 +696,35 @@ void sort_tasklist(tasklist_container* tasklist)
 
 
 /**
+ * Marks given task as done in textlist and tasklist
+ */
+bool mark_task_done(const int id, textlist_container* textlist, tasklist_container* tasklist)
+{
+    // mark task done in tasklist
+    if (!tasklist->list[id]->completed)
+    {
+        tasklist->list[id]->completed = TRUE;
+    }
+
+    // mark task done in textlist
+    if (strcmp("x", &textlist->line[id]->raw_line[0])!=0)
+    {
+        char new_line[TASKLENGTH+1];
+        // add x to raw line
+        snprintf(new_line, TASKLENGTH, "x %s", textlist->line[id]->raw_line);
+        // increase line length
+        textlist->line[id]->line_length = textlist->line[id]->line_length  + 2;
+        // copy new line to textlist
+        for (int i = 0; i < textlist->line[id]->line_length; i++)
+        {
+           textlist->line[id]->raw_line[i] = new_line[i];
+        }
+    }
+    return true;
+}
+
+
+/**
  * Deletes task from textlist marks task deleted in tasklist
  */
 bool delete_task(const int id, textlist_container* textlist, tasklist_container* tasklist)

@@ -231,12 +231,16 @@ void autosave (ezeedo_wrapper_structure* ezeedo)
 /**
  * Handles double-click on task
  */
-void task_doubleclicked (GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *col, GtkListStore *store)
+void task_doubleclicked (GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *col, gpointer user_data)
 {
-    GtkTreeIter  filter_iter;
-    GtkTreeModel *filter_model;
-    GtkTreeIter  child_iter;
-    gchar        *tasktitle;
+    ezeedo_wrapper_structure* ezeedo;
+    GtkTreeIter               filter_iter;
+    GtkTreeModel*             filter_model;
+    GtkTreeIter               child_iter;
+    gchar*                    tasktitle;
+
+    // get ezeedo from user data
+    ezeedo = user_data;
 
     // get filter model from treeview
     filter_model = gtk_tree_view_get_model (treeview);
@@ -258,6 +262,7 @@ void task_doubleclicked (GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewCo
     if (gtk_widget_is_toplevel (toplevel))
     {
 
+        // show selection dialog
         GtkWidget *dialog;
         GtkDialogFlags flags;
         gint result = 0;
@@ -269,16 +274,24 @@ void task_doubleclicked (GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewCo
         gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_APPLY);
 
         result = gtk_dialog_run (GTK_DIALOG (dialog));
-        switch (result)
+
+        if (result == GTK_RESPONSE_APPLY)
         {
-            case GTK_RESPONSE_APPLY:
-                gtk_list_store_set (GTK_LIST_STORE (store), &child_iter, TASK_COMPLETED, TRUE, TASK_NOTCOMPLETED, FALSE, -1);
-                gtk_widget_destroy (dialog);
-                break;
-            case GTK_RESPONSE_REJECT:
-                gtk_widget_destroy (dialog);
-                break;
+            gint id = -1;
+            gtk_tree_model_get (filter_model, &filter_iter, TASK_ID, &id, -1);
+            if (id >= 0)
+            {
+                mark_task_done(id, ezeedo->textlist, ezeedo->tasklist);
+                autosave(ezeedo);
+            }
+            gtk_list_store_set (GTK_LIST_STORE (ezeedo->tasks_store), &child_iter, TASK_COMPLETED, TRUE, TASK_NOTCOMPLETED, FALSE, -1);
+            gtk_widget_destroy (dialog);
         }
+        // result == GTK_RESPONSE_REJECT
+        else
+        {
+            gtk_widget_destroy (dialog);
+        } 
     }
 
     // TODO

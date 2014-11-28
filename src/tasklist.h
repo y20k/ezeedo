@@ -27,7 +27,8 @@
 /**
  * Creates widget containing tasklist
  */
-GtkWidget *display_tasklist (gboolean done, GtkTreeModel *model, tasklist_container* main_tasklist, category_container* context_list, category_container* project_list);
+// GtkWidget *display_tasklist (gboolean done, GtkTreeModel *model, tasklist_container* main_tasklist, category_container* context_list, category_container* project_list);
+GtkWidget *display_tasklist (gboolean done, GtkTreeModel *model);
 
 /**
  * Creates task store

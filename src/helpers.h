@@ -71,7 +71,8 @@ void autosave (ezeedo_wrapper_structure* ezeedo);
 /**
  * Handles double-click on task
  */
-void task_doubleclicked(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *col, GtkListStore *store);
+void task_doubleclicked (GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *col, gpointer user_data);
+
 
 /**
  * Handles single-click on task
