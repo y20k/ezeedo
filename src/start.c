@@ -260,7 +260,7 @@ void activate (GtkApplication* app, gpointer user_data)
         char text[INFODIALOGLENGTH];
         snprintf(text, INFODIALOGLENGTH,"Could not parse file:\n%s", todotxt_file);
         show_info(GTK_WIDGET(window), text, true);
-        select_and_save_file (NULL, GTK_APPLICATION(app));
+        select_and_save_file(NULL, GTK_APPLICATION(app));
     }
     sort_tasklist(main_tasklist);
 
@@ -270,8 +270,7 @@ void activate (GtkApplication* app, gpointer user_data)
     // http://fossies.org/linux/misc/gtk+-3.15.1.tar.gz/gtk+-3.15.1/docs/reference/gtk/html/GtkSidebar.html
     todo_contexts = display_category (context_list, "Contexts");
     todo_projects = display_category (project_list, "Projects");
-    gtk_widget_set_margin_top (GTK_WIDGET (todo_projects), 20);
-    gtk_widget_set_vexpand    (todo_projects, TRUE);
+    gtk_widget_set_vexpand (todo_projects, TRUE);
 
     gtk_container_add (GTK_CONTAINER (todo_categories_box), todo_contexts);
     gtk_container_add (GTK_CONTAINER (todo_categories_box), todo_projects);
