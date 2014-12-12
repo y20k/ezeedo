@@ -73,11 +73,10 @@ void autosave (ezeedo_wrapper_structure* ezeedo);
  */
 void task_doubleclicked (GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *col, gpointer user_data);
 
-
 /**
- * Handles single-click on task
+ * Handles single-click on category
  */
-void task_singleclicked(GtkWidget *widget);
+void category_singleclicked(GtkTreeSelection *category_selection, gpointer user_data);
 
 
 #endif // EZEEDOCALLBACKS_H

@@ -23,17 +23,18 @@
 /**
  * Creates widget containing categorylist
  */
-GtkWidget *display_category (category_container* category_list, const char* category_name)
+GtkWidget* display_category (category_container* category_list, const char* category_name, gint type)
 {
-    GtkWidget *view;
-    GtkListStore *categories_store;
-    GtkTreeViewColumn   *col;
-    GtkCellRenderer     *renderer;
+    GtkWidget*         view;
+    GtkListStore*      categories_store;
+    GtkTreeViewColumn* col;
+    GtkCellRenderer*   renderer;
+   
 
-
-    categories_store = gtk_list_store_new (CATEGORY_COLUMNS,  // total number of colums
-                                           G_TYPE_INT,        // id
-                                           G_TYPE_STRING);    // category
+    categories_store = gtk_list_store_new (CATEGORY_COLUMNS, // total number of colums
+                                           G_TYPE_INT,       // id
+                                           G_TYPE_STRING,    // category
+                                           G_TYPE_INT);      // type
 
 
     // create iterator
@@ -47,6 +48,7 @@ GtkWidget *display_category (category_container* category_list, const char* cate
         gtk_list_store_set (categories_store, &iter,
                             CATEGORY_ID,    category_list->list[i]->id, 
                             CATEGORY_TITLE, category_list->list[i]->title,
+                            CATEGORY_TYPE,  type,
                             -1);
     }
 

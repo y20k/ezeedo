@@ -287,39 +287,56 @@ void task_doubleclicked (GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewCo
             gtk_list_store_set (GTK_LIST_STORE (ezeedo->tasks_store), &child_iter, TASK_COMPLETED, TRUE, TASK_NOTCOMPLETED, FALSE, -1);
             gtk_widget_destroy (dialog);
         }
-        // result == GTK_RESPONSE_REJECT
         else
         {
             gtk_widget_destroy (dialog);
         } 
     }
 
-    // TODO
-    // main_tasklist->list[1]->completed = TRUE;
-    // sort_tasklist (main_tasklist);
-    // save_textlist_to_file (main_textlist, TODOTXTFILE);
-
 }
 
 
 /**
- * Handles single-click on task
+ * Handles single-click on category
  */
-void task_singleclicked (GtkWidget *widget)
+void category_singleclicked(GtkTreeSelection *category_selection, gpointer user_data)
 {
-    GtkTreeModel *model;
-    GtkTreeIter  iter;
+    ezeedo_wrapper_structure* ezeedo;
+    GtkTreeModel*             model;
+    GtkTreeIter               iter;
+    // GtkTreeView*              view;
+    gint                      type;
+    gchar*                    name;
 
-    // TODO remove debugging g_print
-    g_print ("A row has been single-clicked!\n");
+    // get ezeedo from user data
+    ezeedo = user_data;
+
+    // get tree view
+    // view = gtk_tree_selection_get_tree_view (category_selection);
     
-    // get the input
-    if (gtk_tree_selection_get_selected (GTK_TREE_SELECTION (widget), &model, &iter))
+    // get input
+    gtk_tree_selection_get_selected (GTK_TREE_SELECTION (category_selection), &model, &iter);
+    gtk_tree_model_get (model, &iter, CATEGORY_TITLE, &name, -1);
+
+    // get category type
+    gtk_tree_model_get (model, &iter, CATEGORY_TYPE, &type, -1);
+
+    if (type == CATEGORYLIST_CONTEXTS)
     {
-        gchar *name;
-        gtk_tree_model_get (model, &iter, 3, &name, -1);
-        // TODO remove debugging g_print
-        g_print ("Single-clicked row contains name %s\n", name);
-        g_free (name);
+        // DEBUGGING -> show content of row
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Selected context title is: %s", name);
+        show_info(NULL, text, false);
+        show_info(GTK_WIDGET(ezeedo->window), text, true);
+        g_free(name);
+    }
+    else
+    {
+        // DEBUGGING -> show content of row
+        char text[INFODIALOGLENGTH];
+        snprintf(text, INFODIALOGLENGTH,"Selected project title is: %s", name);
+        show_info(NULL, text, false);
+        show_info(GTK_WIDGET(ezeedo->window), text, true);
+        g_free(name);
     }
 }

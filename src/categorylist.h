@@ -27,7 +27,7 @@
 /**
  * Creates widget containing categorylist
  */
-GtkWidget* display_category (category_container* category_list, const char* category_name);
+GtkWidget* display_category (category_container* category_list, const char* category_name, gint type);
 
 
 #endif // CATEGORYLIST_H

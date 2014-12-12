@@ -268,8 +268,8 @@ void activate (GtkApplication* app, gpointer user_data)
     // create and display todo categories widget
     // TODO: rework Contexts and Projects as GtkSidebar / GtkStack for GTK+ 3.16 (April 2015)
     // http://fossies.org/linux/misc/gtk+-3.15.1.tar.gz/gtk+-3.15.1/docs/reference/gtk/html/GtkSidebar.html
-    todo_contexts = display_category (context_list, "Contexts");
-    todo_projects = display_category (project_list, "Projects");
+    todo_contexts = display_category (context_list, "Contexts", CATEGORYLIST_CONTEXTS);
+    todo_projects = display_category (project_list, "Projects", CATEGORYLIST_PROJECTS);
     gtk_widget_set_vexpand (todo_projects, TRUE);
 
     gtk_container_add (GTK_CONTAINER (todo_categories_box), todo_contexts);
@@ -298,14 +298,20 @@ void activate (GtkApplication* app, gpointer user_data)
     gtk_container_add (GTK_CONTAINER (donelist_container_scrolled), donelist);
     gtk_widget_show_all (donelist_container_scrolled);
 
-    // detect double-click
+    // detect double-click on tasklist
     g_signal_connect (todolist, "row-activated", G_CALLBACK(task_doubleclicked), ezeedo);
 
-    // Here be dragons ... detect single-click
-    GtkTreeSelection *selection;
-    selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(todolist));
-    g_signal_connect (selection, "changed", G_CALLBACK(task_singleclicked), NULL);
+    // detect single-click on contexts
+    GtkTreeSelection *context_selection;
+    context_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(todo_contexts));
+    g_signal_connect (context_selection, "changed", G_CALLBACK(category_singleclicked), ezeedo);
+    // TODO g_signal_connect_after -> delect projects if any
 
+    // detect single-click on projects
+    GtkTreeSelection *project_selection;
+    project_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(todo_projects));
+    g_signal_connect (project_selection, "changed", G_CALLBACK(category_singleclicked), ezeedo);
+    // TODO g_signal_connect_after -> delect context if any
 }
 
 
@@ -368,7 +374,7 @@ void show_about_window (GSimpleAction *simple, GVariant *parameter, gpointer use
     const gchar *documenters[] = {"Ezeedo Team", NULL};
     gtk_about_dialog_set_program_name   (GTK_ABOUT_DIALOG (about_dialog), "Ezeedo");
     gtk_about_dialog_set_license_type   (GTK_ABOUT_DIALOG (about_dialog), GTK_LICENSE_MIT_X11);
-    gtk_about_dialog_set_version        (GTK_ABOUT_DIALOG (about_dialog), "0.1 (heros)");
+    gtk_about_dialog_set_version        (GTK_ABOUT_DIALOG (about_dialog), "0.2 (black country rock)");
     gtk_about_dialog_set_comments       (GTK_ABOUT_DIALOG (about_dialog), "A todo.txt app for the GNOME desktop");
     gtk_about_dialog_set_logo_icon_name (GTK_ABOUT_DIALOG (about_dialog), EZEEDOICON);
     gtk_about_dialog_set_authors        (GTK_ABOUT_DIALOG (about_dialog), authors);
