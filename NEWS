@@ -1,22 +1,29 @@
 -----------------------------------------------------------------------
-Ezeedo 0.1 - 5 December 2014
+Ezeedo 0.2 (black country rock) - 9 January 2015
+-----------------------------------------------------------------------
+- ability to filter by project and contexts
+- not yet able to mark filtered tasks as done
+- Ezeedo now needs a show all button
+
+-----------------------------------------------------------------------
+Ezeedo 0.1 (heroes) - 5 December 2014
 -----------------------------------------------------------------------
 - See Ezeedo 0.1 in action 
   https://vimeo.com/113704339
 
 -----------------------------------------------------------------------
-Ezeedo 0.1 - 28 November 2014
+Ezeedo 0.1 (heroes) - 28 November 2014
 -----------------------------------------------------------------------
 - Ezeedo now saves the done flag to file 
 
 -----------------------------------------------------------------------
-Ezeedo 0.1 - 14 November 2014
+Ezeedo 0.1 (heroes) - 14 November 2014
 -----------------------------------------------------------------------
 - Converted the whole project to Anjuta and Autotools 
 - Restructured the source code
 - Deleted and resubmitted the whole project to Github
 
 -----------------------------------------------------------------------
-Ezeedo 0.1 - 15 October 2014
+Ezeedo 0.1 (heroes) - 15 October 2014
 -----------------------------------------------------------------------
 - Created this document
