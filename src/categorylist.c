@@ -23,7 +23,7 @@
 /**
  * Creates widget containing categorylist
  */
-GtkWidget* display_category (category_container* category_list, const char* category_name, gint type)
+GtkWidget* display_category (ezeedo_wrapper_structure* ezeedo, category_container* category_list, const char* category_name, gint type)
 {
     GtkWidget*         view;
     GtkListStore*      categories_store;
@@ -42,14 +42,19 @@ GtkWidget* display_category (category_container* category_list, const char* cate
 
     for (int i = 0; i < category_list->number_of_categories; i++)
     {
-        // acquire an iterator 
-        gtk_list_store_append (categories_store, &iter);
+        if (category_contains_open_tasks(ezeedo, category_list->list[i]->id, type))
+        //if (1)
 
-        gtk_list_store_set (categories_store, &iter,
-                            CATEGORY_ID,    category_list->list[i]->id, 
-                            CATEGORY_TITLE, category_list->list[i]->title,
-                            CATEGORY_TYPE,  type,
-                            -1);
+        {
+            // acquire an iterator 
+            gtk_list_store_append (categories_store, &iter);
+
+            gtk_list_store_set (categories_store, &iter,
+                                CATEGORY_ID,    category_list->list[i]->id, 
+                                CATEGORY_TITLE, category_list->list[i]->title,
+                                CATEGORY_TYPE,  type,
+                                -1);
+        }
     }
 
     view = gtk_tree_view_new_with_model (GTK_TREE_MODEL (categories_store));
@@ -65,4 +70,32 @@ GtkWidget* display_category (category_container* category_list, const char* cate
     gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (view)), GTK_SELECTION_SINGLE);
 
     return (view);
+}
+
+
+/**
+ * Determines if given category contains open tasks
+ */
+gboolean category_contains_open_tasks(ezeedo_wrapper_structure* ezeedo, gint id, gint type)
+{
+    for (int i = 0; i < ezeedo->tasklist->number_of_tasks; i++)
+    {
+        // task has given context and is not completed
+        if (type == CATEGORYLIST_CONTEXTS && 
+            !ezeedo->tasklist->list[i]->completed &&
+            ezeedo->tasklist->list[i]->number_of_contexts != 0 && 
+            ezeedo->tasklist->list[i]->context[0] == id)
+        {
+            return TRUE;
+        }
+        // task has given project and is not completed
+        else if (type == CATEGORYLIST_PROJECTS && 
+                 !ezeedo->tasklist->list[i]->completed &&
+                 ezeedo->tasklist->list[i]->number_of_projects != 0 && 
+                 ezeedo->tasklist->list[i]->project[0] == id)
+        {
+            return TRUE;
+        }
+    }
+    return FALSE;
 }

@@ -18,6 +18,7 @@
 
 
 #include "helpers.h"
+#include "tasklist.h"
 
 
 /**
@@ -302,25 +303,48 @@ void task_doubleclicked (GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewCo
 void category_singleclicked(GtkTreeSelection *category_selection, gpointer user_data)
 {
     ezeedo_wrapper_structure* ezeedo;
-    GtkTreeModel*             model;
+    GtkTreeModel*             selection_model;
     GtkTreeIter               iter;
-    // GtkTreeView*              view;
     gint                      type;
-    gchar*                    name;
-
+    gint                      id;
+    GtkTreeModel*             category_filter;
+    
     // get ezeedo from user data
     ezeedo = user_data;
 
-    // get tree view
-    // view = gtk_tree_selection_get_tree_view (category_selection);
-    
     // get input
-    gtk_tree_selection_get_selected (GTK_TREE_SELECTION (category_selection), &model, &iter);
-    gtk_tree_model_get (model, &iter, CATEGORY_TITLE, &name, -1);
+    gtk_tree_selection_get_selected (GTK_TREE_SELECTION (category_selection), &selection_model, &iter);
 
-    // get category type
-    gtk_tree_model_get (model, &iter, CATEGORY_TYPE, &type, -1);
+    // get category id and type
+    gtk_tree_model_get (selection_model, &iter, CATEGORY_ID, &id, -1);
+    gtk_tree_model_get (selection_model, &iter, CATEGORY_TYPE, &type, -1);
+    
+    // mark tasks as visible
+    change_task_visibility(ezeedo, type, id);
 
+
+    category_filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ezeedo->tasks_store), NULL );
+    gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(category_filter), TASK_FILTERED);
+
+    // create and display todolist widget
+    GtkWidget* filter_todolist;
+    GtkWidget* parent;
+    parent = gtk_widget_get_parent (ezeedo->todolist);
+    gtk_widget_destroy (ezeedo->todolist);
+
+    filter_todolist = display_tasklist (GTK_TREE_MODEL(category_filter));
+
+    // add todolist to ezeedo wrapper structure
+    ezeedo->todolist = filter_todolist;    
+
+
+
+    gtk_container_add (GTK_CONTAINER (parent), filter_todolist);
+    gtk_widget_show_all (parent);
+    
+
+/*    gchar* name;
+    gtk_tree_model_get (model, &iter, CATEGORY_TITLE, &name, -1); 
     if (type == CATEGORYLIST_CONTEXTS)
     {
         // DEBUGGING -> show content of row
@@ -338,5 +362,5 @@ void category_singleclicked(GtkTreeSelection *category_selection, gpointer user_
         show_info(NULL, text, false);
         show_info(GTK_WIDGET(ezeedo->window), text, true);
         g_free(name);
-    }
+    }*/
 }

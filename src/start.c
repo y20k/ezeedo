@@ -268,33 +268,36 @@ void activate (GtkApplication* app, gpointer user_data)
     // create and display todo categories widget
     // TODO: rework Contexts and Projects as GtkSidebar / GtkStack for GTK+ 3.16 (April 2015)
     // http://fossies.org/linux/misc/gtk+-3.15.1.tar.gz/gtk+-3.15.1/docs/reference/gtk/html/GtkSidebar.html
-    todo_contexts = display_category (context_list, "Contexts", CATEGORYLIST_CONTEXTS);
-    todo_projects = display_category (project_list, "Projects", CATEGORYLIST_PROJECTS);
-    gtk_widget_set_vexpand (todo_projects, TRUE);
+    todo_contexts = display_category(ezeedo, ezeedo->context_list, "Contexts", CATEGORYLIST_CONTEXTS);
+    todo_projects = display_category(ezeedo, ezeedo->project_list, "Projects", CATEGORYLIST_PROJECTS);
+    gtk_widget_set_vexpand(todo_projects, TRUE);
 
-    gtk_container_add (GTK_CONTAINER (todo_categories_box), todo_contexts);
-    gtk_container_add (GTK_CONTAINER (todo_categories_box), todo_projects);
-    gtk_widget_show_all (todo_categories_box);
+    gtk_container_add(GTK_CONTAINER(todo_categories_box), todo_contexts);
+    gtk_container_add(GTK_CONTAINER(todo_categories_box), todo_projects);
+    gtk_widget_show_all(todo_categories_box);
 
 
     // fill tasks store
     fill_tasks_store (ezeedo);
 
     GtkTreeModel *filter_todo;
-    filter_todo = gtk_tree_model_filter_new(GTK_TREE_MODEL(tasks_store), NULL );
-    gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter_todo), TASK_NOTCOMPLETED );
-
+    filter_todo = gtk_tree_model_filter_new(GTK_TREE_MODEL(tasks_store), NULL);
+    gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter_todo), TASK_NOTCOMPLETED);
+    
     GtkTreeModel *filter_done;
     filter_done = gtk_tree_model_filter_new(GTK_TREE_MODEL(tasks_store), NULL );
-    gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter_done), TASK_COMPLETED );
+    gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter_done), TASK_COMPLETED);
 
     // create and display todolist widget
-    todolist = display_tasklist (FALSE, GTK_TREE_MODEL(filter_todo));
+    todolist = display_tasklist (GTK_TREE_MODEL(filter_todo));
     gtk_container_add (GTK_CONTAINER (todolist_container_scrolled), todolist);
     gtk_widget_show_all (todolist_container_scrolled);
 
+    // add todolist to ezeedo wrapper structure
+    ezeedo->todolist = todolist;
+
     // create and display donelist widget
-    donelist = display_tasklist (TRUE, GTK_TREE_MODEL(filter_done));
+    donelist = display_tasklist (GTK_TREE_MODEL(filter_done));
     gtk_container_add (GTK_CONTAINER (donelist_container_scrolled), donelist);
     gtk_widget_show_all (donelist_container_scrolled);
 
