@@ -52,12 +52,13 @@
 enum
 {
     TASK_ID,
-    TASK_COMPLETED,
-    TASK_NOTCOMPLETED,
     TASK_PRIORITY,
     TASK_DESCRIPTION,
     TASK_CONTEXT,
     TASK_PROJECT,
+    TASK_COMPLETED,
+    TASK_NOTCOMPLETED,
+    TASK_FILTERED,
     TASK_COLUMNS
 };
 
@@ -84,6 +85,7 @@ typedef struct category
 {
     int  id;
     char title[WORDLENGTH+1];
+    int  open_tasks;
 }
 category;
 
@@ -154,6 +156,7 @@ typedef struct ezeedo_wrapper_structure
     category_container* project_list;
     GtkApplication*     application;
     GtkWidget*          window;
+    GtkWidget*          todolist;
     GtkListStore*       tasks_store;
     // GSettings          *settings;
 }
@@ -233,7 +236,7 @@ bool check_task_project(char* word, const int word_length,
 /**
  * Lookup id of given word in category list
  */
-int get_category_id (const char category_identifier, char* word, const int word_length,
+int get_category_id(const char category_identifier, char* word, const int word_length,
                      category_container* category_list);
 
 

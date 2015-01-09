@@ -308,15 +308,13 @@ bool create_new_task(const char* line, task* new_task,
             }
 
             // task context
-            else if (check_task_context(word, word_character_counter,
-                                        context_list, new_task))
+            else if (check_task_context(word, word_character_counter, context_list, new_task))
             {
                 word_character_counter = 0;
             }
 
             // task project
-            else if (check_task_project(word, word_character_counter,
-                                        project_list, new_task))
+            else if (check_task_project(word, word_character_counter, project_list, new_task))
             {
                 word_character_counter = 0;
             }
