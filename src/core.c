@@ -23,9 +23,11 @@
 
 
 /**
- * Loads todo.txt file into memory.
+ * Loads todo.txt file into memory
  */
-bool load_tasklist_file (const char* tasklist_file, textlist_container* textlist)
+bool 
+load_tasklist_file (const char         *tasklist_file,
+                    textlist_container *textlist)
 {
     if (strlen(tasklist_file) > TODOTXTFILELENGTH)
     {
@@ -121,12 +123,13 @@ bool load_tasklist_file (const char* tasklist_file, textlist_container* textlist
 
 
 /**
- * Parses textlist and loads it into tasklist.
+ * Parses textlist and loads it into tasklist
  */
-bool parse_textlist(textlist_container* textlist,
-                    tasklist_container* tasklist,
-                    category_container* context_list,
-                    category_container* project_list)
+bool
+parse_textlist (textlist_container *textlist,
+                tasklist_container *tasklist,
+                category_container *context_list,
+                category_container *project_list)
 {
     // for each line within textlist
     for (int i = 0; i < textlist->number_of_lines; i++)
@@ -147,9 +150,11 @@ bool parse_textlist(textlist_container* textlist,
 
 
 /**
- * Adds line of text to textlist.
+ * Adds line of text to textlist
  */
-bool add_line_to_textlist(const char* line, textlist_container* textlist)
+bool
+add_line_to_textlist (const char         *line,
+                      textlist_container *textlist)
 {
     // check the length of given line
     if (strlen(line) > TASKLENGTH)
@@ -181,7 +186,9 @@ bool add_line_to_textlist(const char* line, textlist_container* textlist)
 /**
  * Saves a textlist to file
  */
-bool save_textlist_to_file(textlist_container* textlist, const char* tasklist_file)
+bool
+save_textlist_to_file (textlist_container *textlist,
+                       const char         *tasklist_file)
 {
 
     // open todo.txt file
@@ -230,11 +237,13 @@ bool save_textlist_to_file(textlist_container* textlist, const char* tasklist_fi
 
 
 /**
- * Adds line of text as task to tasklist.
+ * Adds line of text as task to tasklist
  */
-bool add_task_to_tasklist(const char* line, tasklist_container* tasklist,
-                          category_container* context_list,
-                          category_container* project_list)
+bool
+add_task_to_tasklist (const char         *line,
+                      tasklist_container *tasklist,
+                      category_container *context_list, 
+                      category_container *project_list)
 {
     // create new task
     task* new_task = calloc(1, sizeof(task));
@@ -262,11 +271,13 @@ bool add_task_to_tasklist(const char* line, tasklist_container* tasklist,
 
 
 /**
- * Creates new task from given line of text.
+ * Creates new task from given line of text
  */
-bool create_new_task(const char* line, task* new_task,
-                     category_container* context_list,
-                     category_container* project_list)
+bool
+create_new_task (const char         *line,
+                 task               *new_task,
+                 category_container *context_list, 
+                 category_container *project_list)
 {
 
     // initialize some variables
@@ -354,9 +365,11 @@ bool create_new_task(const char* line, task* new_task,
 
 
 /**
- * Looks for the completed syntax.
+ * Looks for the completed syntax
  */
-bool check_task_completion(const char* word, const int word_length)
+bool
+check_task_completion (const char *word,
+                       const int   word_length)
 {
     if (word_length == 1
         && word[0]  == 'x')
@@ -371,9 +384,12 @@ bool check_task_completion(const char* word, const int word_length)
 
 
 /**
- * Looks for the priority syntax.
+ * Looks for the priority syntax
  */
-bool check_task_priority(const char* word, const int word_length, task* new_task)
+bool
+check_task_priority (const char *word,
+                     const int   word_length,
+                     task       *new_task)
 {
     if (new_task->priority == 0
         && word_length     == 3
@@ -392,8 +408,11 @@ bool check_task_priority(const char* word, const int word_length, task* new_task
 /**
  * Looks for the context syntax and puts word into given context list and given task.
  */
-bool check_task_context(char* word, const int word_length,
-                        category_container* context_list, task* new_task)
+bool
+check_task_context (char               *word,
+                    const int           word_length,
+                    category_container *context_list,
+                    task               *new_task)
 {
     if (word[0] == '@' && word_length   >  1)
     {
@@ -454,8 +473,11 @@ bool check_task_context(char* word, const int word_length,
 /**
  * Looks for the project syntax and puts word into given project list and given task.
  */
-bool check_task_project(char* word, const int word_length,
-                        category_container* project_list, task* new_task)
+bool
+check_task_project (char               *word,
+                    const int           word_length,
+                    category_container *project_list,
+                    task               *new_task)
 {
     if (word[0] == '+' && word_length > 1)
     {
@@ -516,8 +538,11 @@ bool check_task_project(char* word, const int word_length,
 /**
  * Lookup id of given word in category list
  */
-int get_category_id (const char category_identifier, char* word, const int word_length,
-                     category_container* category_list)
+int
+get_category_id (const char           category_identifier,
+                 char*                word,
+                 const int            word_length,
+                 category_container *category_list)
 {
     // strip category identifier (e.g. @) and trailing space
     int i = 0;
@@ -544,11 +569,12 @@ int get_category_id (const char category_identifier, char* word, const int word_
 /**
  * Filters tasklist by given category puts results into filtered tasklist
  */
-bool filter_by_category(const char category_identifier,
-                        const int category_id,
-                        category_container* category_list,
-                        tasklist_container* tasklist,
-                        tasklist_container* filtered_tasklist)
+bool
+filter_by_category (const char          category_identifier,
+                    const int           category_id,
+                    category_container *category_list,
+                    tasklist_container *tasklist,
+                    tasklist_container *filtered_tasklist)
 {
     // inititalize a counter
     int counter = 0;
@@ -609,7 +635,9 @@ bool filter_by_category(const char category_identifier,
 /**
  * Determines which task has higher priority. Returns true if tasks are in correct order.
  */
-bool compare_current_to_next (task* current_task, task* next_task)
+bool
+compare_current_to_next (task *current_task,
+                         task *next_task)
 {
     // determine maximum length for comparison of descriptions
     int maximum_length;
@@ -668,7 +696,8 @@ bool compare_current_to_next (task* current_task, task* next_task)
 /**
  * Sorts global tasklist
  */
-void sort_tasklist(tasklist_container* tasklist)
+void
+sort_tasklist (tasklist_container* tasklist)
 {
     // create a temporary task
     task* tmp = malloc(sizeof(task));
@@ -696,7 +725,10 @@ void sort_tasklist(tasklist_container* tasklist)
 /**
  * Marks given task as done in textlist and tasklist
  */
-bool mark_task_done(const int id, textlist_container* textlist, tasklist_container* tasklist)
+bool
+mark_task_done (const int           id,
+                textlist_container *textlist,
+                tasklist_container *tasklist)
 {
     // mark task done in tasklist
     if (!tasklist->list[id]->completed)
@@ -725,7 +757,10 @@ bool mark_task_done(const int id, textlist_container* textlist, tasklist_contain
 /**
  * Deletes task from textlist marks task deleted in tasklist
  */
-bool delete_task(const int id, textlist_container* textlist, tasklist_container* tasklist)
+bool
+delete_task (const int           id,
+             textlist_container *textlist,
+             tasklist_container *tasklist)
 {
     bool task_deleted;
     bool line_deleted;
@@ -764,7 +799,8 @@ bool delete_task(const int id, textlist_container* textlist, tasklist_container*
 /**
  * Unloads given textlist
  */
-bool unload_textlist(textlist_container* textlist)
+bool
+unload_textlist (textlist_container *textlist)
 {
     // free textlist
     for (int i = 0; i < textlist->number_of_lines; i++)
@@ -781,7 +817,8 @@ bool unload_textlist(textlist_container* textlist)
 /**
  * Unloads given tasklist
  */
-bool unload_tasklist(tasklist_container* tasklist)
+bool
+unload_tasklist (tasklist_container *tasklist)
 {
     // free tasklist
     for (int i = 0; i < tasklist->number_of_tasks; i++)
@@ -798,7 +835,8 @@ bool unload_tasklist(tasklist_container* tasklist)
 /**
  * Unloads given category list
  */
-bool unload_category_list(category_container* category_list)
+bool
+unload_category_list (category_container *category_list)
 {
     // free category list
     for (int i = 0; i < category_list->number_of_categories; i++)

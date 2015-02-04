@@ -27,17 +27,24 @@
 /**
  * Shows default first window of Ezeedo
  */
-void activate(GtkApplication* app, gpointer user_data);
+void
+activate (GtkApplication *app,
+          gpointer        user_data);
 
 /**
  * Sets up the application when it first starts
  */
-void startup(GApplication *app, gpointer user_data);
+void
+startup (GApplication *app,
+         gpointer      user_data);
 
 /**
  * Shows the about window
  */
-void show_about_window (GSimpleAction *simple, GVariant *parameter, gpointer user_data);
+void
+show_about_window (GSimpleAction *simple,
+                   GVariant      *parameter,
+                   gpointer       user_data);
 
 
 #endif // START_H

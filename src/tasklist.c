@@ -23,7 +23,8 @@
 /**
  * Creates widget containing tasklist
  */
-GtkWidget* display_tasklist (GtkTreeModel *model)
+GtkWidget 
+*display_tasklist (GtkTreeModel *model)
 {
     GtkWidget *view; 
     // GtkListStore *tasks_store;
@@ -68,7 +69,8 @@ GtkWidget* display_tasklist (GtkTreeModel *model)
 /**
  * Creates task store
  */
-GtkListStore *create_tasks_store (void)
+GtkListStore 
+*create_tasks_store (void)
 {
     GtkListStore *tasks_store;
     tasks_store = gtk_list_store_new (TASK_COLUMNS,    // total number of colums
@@ -89,7 +91,8 @@ GtkListStore *create_tasks_store (void)
 /**
  * Fills tasks into given task store
  */
-void *fill_tasks_store (ezeedo_wrapper_structure* ezeedo)
+void
+*fill_tasks_store (ezeedo_wrapper_structure *ezeedo)
 {
 
     GtkListStore *tasks_store;
@@ -110,7 +113,10 @@ void *fill_tasks_store (ezeedo_wrapper_structure* ezeedo)
 /**
  * Adds one task to task store
  */
-void add_task_to_taskstore (gint task_id, GtkTreeIter iter, ezeedo_wrapper_structure* ezeedo)
+void
+add_task_to_taskstore (gint                      task_id,
+                       GtkTreeIter               iter,
+                       ezeedo_wrapper_structure *ezeedo)
 {
     gchar task_priority_symbol [7]; // TODO Length?
     gchar context[WORDLENGTH+1];
@@ -182,7 +188,10 @@ void add_task_to_taskstore (gint task_id, GtkTreeIter iter, ezeedo_wrapper_struc
 /**
  * Changes visibility column of task list for given parameters
  */
-void change_task_visibility(ezeedo_wrapper_structure* ezeedo, gint category_type, gint category_id)
+void
+change_task_visibility (ezeedo_wrapper_structure *ezeedo,
+                        gint                      category_type,
+                        gint                      category_id)
 {
     GtkTreeIter iter;
 
@@ -197,21 +206,21 @@ void change_task_visibility(ezeedo_wrapper_structure* ezeedo, gint category_type
             // if given context matches set filtered flag
             if ((category_type == CATEGORYLIST_CONTEXTS) && (category_id == ezeedo->tasklist->list[i]->context[0]))
             {
-                gtk_list_store_set(GTK_LIST_STORE(ezeedo->tasks_store), &iter, TASK_FILTERED, TRUE, -1);
+                gtk_list_store_set (GTK_LIST_STORE(ezeedo->tasks_store), &iter, TASK_FILTERED, TRUE, -1);
             }
             // if given project matches set filtered flag
             else if ((category_type == CATEGORYLIST_PROJECTS) && (category_id == ezeedo->tasklist->list[i]->project[0]))
             {
-                gtk_list_store_set(GTK_LIST_STORE(ezeedo->tasks_store), &iter, TASK_FILTERED, TRUE, -1);
+                gtk_list_store_set (GTK_LIST_STORE(ezeedo->tasks_store), &iter, TASK_FILTERED, TRUE, -1);
             }
             else 
             {
-                gtk_list_store_set(GTK_LIST_STORE(ezeedo->tasks_store), &iter, TASK_FILTERED, FALSE, -1);
+                gtk_list_store_set (GTK_LIST_STORE(ezeedo->tasks_store), &iter, TASK_FILTERED, FALSE, -1);
             }
         }
 
         // make iter point to next row
-        gtk_tree_model_iter_next(GTK_TREE_MODEL(ezeedo->tasks_store), &iter);
+        gtk_tree_model_iter_next (GTK_TREE_MODEL(ezeedo->tasks_store), &iter);
     }
     return;
 }

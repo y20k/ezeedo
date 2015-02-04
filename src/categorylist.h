@@ -27,12 +27,26 @@
 /**
  * Creates widget containing categorylist
  */
-GtkWidget* display_category (ezeedo_wrapper_structure* ezeedo, category_container* category_list, const char* category_name, gint type);
+GtkWidget
+*display_category (ezeedo_wrapper_structure *ezeedo,
+                   category_container       *category_list,
+                   const char              *category_name,
+                   gint                      type);
 
 /**
  * Determines if given category contains open tasks
  */
-gboolean category_contains_open_tasks(ezeedo_wrapper_structure* ezeedo, gint id, gint type);
+gboolean
+category_contains_open_tasks (ezeedo_wrapper_structure *ezeedo,
+                              gint                      id,
+                              gint                      type);
+
+/**
+ * Shows all tasks and resets any category selections
+ */
+void
+show_all (GtkButton *button,
+          gpointer   user_data);
 
 
 #endif // CATEGORYLIST_H

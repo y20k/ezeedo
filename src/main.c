@@ -24,7 +24,9 @@
 /**
  * Kick it off
  */
-int main (int argc, char* argv[])
+int
+main (int   argc,
+      char *argv[])
 {
 
     // create a gtk application

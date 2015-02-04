@@ -18,7 +18,6 @@
 
 
 #include "start.h"
-
 #include "categorylist.h"
 #include "helpers.h"
 #include "preferences.h"
@@ -29,7 +28,9 @@
 /**
  * Shows default first window of Ezeedo
  */
-void activate (GtkApplication* app, gpointer user_data)
+void
+activate (GtkApplication *app,
+          gpointer        user_data)
 {
     // create convenience wrapper structure for importent elements
     ezeedo_wrapper_structure* ezeedo = calloc(1, sizeof(ezeedo_wrapper_structure));
@@ -91,6 +92,7 @@ void activate (GtkApplication* app, gpointer user_data)
     GtkWidget* todo_categories_box;
     GtkWidget* todo_contexts;
     GtkWidget* todo_projects;
+    GtkWidget* showall_button;
     GtkWidget* task_entry;
 
     GtkWidget* donelist_box;
@@ -154,7 +156,13 @@ void activate (GtkApplication* app, gpointer user_data)
     todo_categories_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_vexpand(todo_categories_container_scrolled, TRUE);
 
-
+    // create show all button
+    showall_button = gtk_button_new_with_label("Show All");
+/*    gtk_widget_set_margin_start  (GTK_WIDGET (showall_button), 10);
+    gtk_widget_set_margin_end    (GTK_WIDGET (showall_button), 10);
+    gtk_widget_set_margin_top    (GTK_WIDGET (showall_button), 10);
+    gtk_widget_set_margin_bottom (GTK_WIDGET (showall_button), 10);*/
+    
     // create right column for the todo tab
     todolist_box_right = gtk_frame_new (NULL);
 
@@ -195,6 +203,9 @@ void activate (GtkApplication* app, gpointer user_data)
     // detect entry signal
     g_signal_connect (task_entry, "activate", G_CALLBACK (add_task_entry), ezeedo);
 
+    // detect show all button pressed
+    g_signal_connect (showall_button, "clicked", G_CALLBACK (show_all), ezeedo);
+    
     // detect archive button pressed
     g_signal_connect (archive_button, "clicked", G_CALLBACK (display_info_dialog), "Task archival is not supported yet.");
     
@@ -274,8 +285,12 @@ void activate (GtkApplication* app, gpointer user_data)
 
     gtk_container_add(GTK_CONTAINER(todo_categories_box), todo_contexts);
     gtk_container_add(GTK_CONTAINER(todo_categories_box), todo_projects);
+    gtk_container_add(GTK_CONTAINER(todo_categories_box), showall_button);
     gtk_widget_show_all(todo_categories_box);
 
+    // add todo_contexts and todo_projects to ezeedo wrapper structure
+    ezeedo->todo_contexts = todo_contexts;
+    ezeedo->todo_projects = todo_projects;    
 
     // fill tasks store
     fill_tasks_store (ezeedo);
@@ -291,7 +306,7 @@ void activate (GtkApplication* app, gpointer user_data)
     // create and display todolist widget
     todolist = display_tasklist (GTK_TREE_MODEL(filter_todo));
     gtk_container_add (GTK_CONTAINER (todolist_container_scrolled), todolist);
-    gtk_widget_show_all (todolist_container_scrolled);
+    gtk_widget_show_all(todolist_container_scrolled);
 
     // add todolist to ezeedo wrapper structure
     ezeedo->todolist = todolist;
@@ -299,29 +314,20 @@ void activate (GtkApplication* app, gpointer user_data)
     // create and display donelist widget
     donelist = display_tasklist (GTK_TREE_MODEL(filter_done));
     gtk_container_add (GTK_CONTAINER (donelist_container_scrolled), donelist);
-    gtk_widget_show_all (donelist_container_scrolled);
+    gtk_widget_show_all(donelist_container_scrolled);
 
     // detect double-click on tasklist
     g_signal_connect (todolist, "row-activated", G_CALLBACK(task_doubleclicked), ezeedo);
 
-    // detect single-click on contexts
-    GtkTreeSelection *context_selection;
-    context_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(todo_contexts));
-    g_signal_connect (context_selection, "changed", G_CALLBACK(category_singleclicked), ezeedo);
-    // TODO g_signal_connect_after -> delect projects if any
-
-    // detect single-click on projects
-    GtkTreeSelection *project_selection;
-    project_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(todo_projects));
-    g_signal_connect (project_selection, "changed", G_CALLBACK(category_singleclicked), ezeedo);
-    // TODO g_signal_connect_after -> delect context if any
 }
 
 
 /**
  * Sets up the application when it first starts
  */
-void startup (GApplication *app, gpointer user_data)
+void
+startup (GApplication *app,
+         gpointer      user_data)
 {
     // define widgets
     GMenu* menu;
@@ -353,8 +359,8 @@ void startup (GApplication *app, gpointer user_data)
     gtk_application_set_accels_for_action (GTK_APPLICATION(app), "app.quit", quit_accels);
 
     quit_action = g_simple_action_new ("quit", NULL);
-    g_signal_connect        (quit_action, "activate", G_CALLBACK(quit_application), app);
-    g_action_map_add_action (G_ACTION_MAP(app), G_ACTION(quit_action));
+    g_signal_connect        (quit_action, "activate", G_CALLBACK (quit_application), app);
+    g_action_map_add_action (G_ACTION_MAP(app), G_ACTION (quit_action));
 
     // Set menu for the overall application
     gtk_application_set_app_menu (GTK_APPLICATION (app), G_MENU_MODEL (menu));
@@ -364,7 +370,10 @@ void startup (GApplication *app, gpointer user_data)
 /**
  * Shows the about window
  */
-void show_about_window (GSimpleAction *simple, GVariant *parameter, gpointer user_data)
+void
+show_about_window (GSimpleAction *simple,
+                   GVariant      *parameter,
+                   gpointer       user_data)
 {
     // define widgets
     GtkWidget *about_dialog;
@@ -384,7 +393,7 @@ void show_about_window (GSimpleAction *simple, GVariant *parameter, gpointer use
     gtk_about_dialog_set_documenters    (GTK_ABOUT_DIALOG (about_dialog), documenters);
     gtk_about_dialog_set_website_label  (GTK_ABOUT_DIALOG (about_dialog), "Ezeedo Website");
     gtk_about_dialog_set_website        (GTK_ABOUT_DIALOG (about_dialog), "http://www.y20k.org/ezeedo");
-    gtk_window_set_title                (GTK_WINDOW(about_dialog), "");
+    gtk_window_set_title                (GTK_WINDOW (about_dialog), "");
 
     // connect signals and show widget   
     g_signal_connect_swapped (GTK_DIALOG (about_dialog), "response", G_CALLBACK (gtk_widget_destroy), GTK_DIALOG (about_dialog));

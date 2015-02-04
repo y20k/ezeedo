@@ -93,7 +93,7 @@ category;
 // definition of category container
 typedef struct category_container
 {
-    category* list[TASKLISTLENGTH];
+    category *list[TASKLISTLENGTH];
     int       number_of_categories;
 }
 category_container;
@@ -120,7 +120,7 @@ task;
 // definition of tasklist container
 typedef struct tasklist_container
 {
-    task* list[TASKLISTLENGTH];
+    task *list[TASKLISTLENGTH];
     int   number_of_tasks;
     // list of contexts
     // list of projects
@@ -141,7 +141,7 @@ textline;
 // definition of textlist container
 typedef struct textlist_container
 {
-    textline* line[TASKLISTLENGTH];
+    textline *line[TASKLISTLENGTH];
     int       number_of_lines;
 }
 textlist_container;
@@ -150,14 +150,16 @@ textlist_container;
 // definition of the ezeedo wrapper structure
 typedef struct ezeedo_wrapper_structure
 {
-    textlist_container* textlist;
-    tasklist_container* tasklist;
-    category_container* context_list;
-    category_container* project_list;
-    GtkApplication*     application;
-    GtkWidget*          window;
-    GtkWidget*          todolist;
-    GtkListStore*       tasks_store;
+    textlist_container *textlist;
+    tasklist_container *tasklist;
+    category_container *context_list;
+    category_container *project_list;
+    GtkApplication     *application;
+    GtkWidget          *window;
+    GtkWidget          *todolist;
+    GtkWidget          *todo_contexts;
+    GtkWidget          *todo_projects;
+    GtkListStore       *tasks_store;
     // GSettings          *settings;
 }
 ezeedo_wrapper_structure;
@@ -166,138 +168,150 @@ ezeedo_wrapper_structure;
 /**
  * Loads todo.txt file into memory.
  */
-bool load_tasklist_file(const char* tasklist_file,
-                        textlist_container* textlist);
-
+bool 
+load_tasklist_file (const char         *tasklist_file,
+                    textlist_container *textlist);
 
 /**
  * Parses textlist and loads it into tasklist.
  */
-bool parse_textlist(textlist_container* textlist,
-                    tasklist_container* tasklist,
-                    category_container* context_list,
-                    category_container* project_list);
-
+bool
+parse_textlist (textlist_container *textlist,
+                tasklist_container *tasklist,
+                category_container *context_list,
+                category_container *project_list);
 
 /**
  * Adds line of text to textlist.
  */
-bool add_line_to_textlist(const char* line, textlist_container* textlist);
-
+bool
+add_line_to_textlist (const char         *line,
+                      textlist_container *textlist);
 
 /**
  * Saves a textlist to file
  */
-bool save_textlist_to_file(textlist_container* textlist, const char* tasklist_file);
-
-
-/**
- * Adds line of text as task to tasklist.
- */
-bool add_task_to_tasklist(const char* line, tasklist_container* tasklist,
-                          category_container* context_list, 
-                          category_container* project_list);
-
+bool
+save_textlist_to_file (textlist_container *textlist,
+                       const char         *tasklist_file);
 
 /**
- * Creates new task from given line of text.
+ * Adds line of text as task to tasklist
  */
-bool create_new_task(const char* line, task* new_task,
-                     category_container* context_list, 
-                     category_container* project_list);
-
+bool
+add_task_to_tasklist (const char         *line,
+                      tasklist_container *tasklist,
+                      category_container *context_list, 
+                      category_container *project_list);
 
 /**
- * Looks for the completed syntax.
+ * Creates new task from given line of text
  */
-bool check_task_completion(const char* word, const int word_length);
-
+bool
+create_new_task (const char         *line,
+                 task               *new_task,
+                 category_container *context_list, 
+                 category_container *project_list);
 
 /**
- * Looks for the priority syntax.
+ * Looks for the completed syntax
  */
-bool check_task_priority(const char* word, const int word_length, task* new_task);
-
+bool
+check_task_completion (const char *word,
+                       const int   word_length);
 
 /**
- * Looks for the context syntax and puts word into given context list and given task.
+ * Looks for the priority syntax
  */
-bool check_task_context(char* word, const int word_length,
-                        category_container* context_list, task* new_task);
+bool
+check_task_priority (const char *word,
+                     const int   word_length,
+                     task       *new_task);
 
+/**
+ * Looks for the context syntax and puts word into given context list and given task
+ */
+bool
+check_task_context (char               *word,
+                    const int           word_length,
+                    category_container *context_list,
+                    task               *new_task);
 
 /**
  * Looks for the project syntax and puts word into given project list and given task.
  */
-bool check_task_project(char* word, const int word_length,
-                        category_container* project_list, task* new_task);
-
+bool
+check_task_project (char               *word,
+                    const int           word_length,
+                    category_container *project_list,
+                    task               *new_task);
 
 /**
  * Lookup id of given word in category list
  */
-int get_category_id(const char category_identifier, char* word, const int word_length,
-                     category_container* category_list);
+int
+get_category_id (const char           category_identifier,
+                 char*                word,
+                 const int            word_length,
+                 category_container *category_list);
 
 
 /**
  * Filters tasklist by given category puts results into filtered tasklist
  */
-bool filter_by_category(const char category_identifier,
-                        const int category_id,
-                        category_container* category_list,
-                        tasklist_container* tasklist,
-                        tasklist_container* filtered_tasklist);
-
+bool
+filter_by_category (const char          category_identifier,
+                    const int           category_id,
+                    category_container *category_list,
+                    tasklist_container *tasklist,
+                    tasklist_container *filtered_tasklist);
 
 /**
  * Determines which task has higher priority. Returns true if tasks are in correct order.
  */
-bool compare_current_to_next (task* current_task, task* next_task);
-
-
-/**
- * Marks given task as done in textlist and tasklist
- */
-bool mark_task_done(const int id, textlist_container* textlist, tasklist_container* tasklist);
-
-
-/**
- * Deletes task from textlist marks task deleted in tasklist
- */
-bool delete_task(const int id, textlist_container* textlist, tasklist_container* tasklist);
-
-
-/**
- * Unloads given textlist
- */
-bool unload_textlist(textlist_container* textlist);
-
+bool
+compare_current_to_next (task *current_task,
+                         task *next_task);
 
 /**
  * Sorts given tasklist
  */
-void sort_tasklist(tasklist_container* tasklist);
+void
+sort_tasklist (tasklist_container* tasklist);
 
+/**
+ * Marks given task as done in textlist and tasklist
+ */
+bool
+mark_task_done (const int           id,
+                textlist_container *textlist,
+                tasklist_container *tasklist);
+
+/**
+ * Deletes task from textlist marks task deleted in tasklist
+ */
+bool
+delete_task (const int           id,
+             textlist_container *textlist,
+             tasklist_container *tasklist);
+
+/**
+ * Unloads given textlist
+ */
+bool
+unload_textlist (textlist_container *textlist);
 
 /**
  * Unloads given tasklist
  */
-bool unload_tasklist(tasklist_container* tasklist);
-
+bool
+unload_tasklist (tasklist_container *tasklist);
 
 /**
  * Unloads given category list
  */
-bool unload_category_list(category_container* category_list);
-
-
-/**
- * Prints given tasklist memory using printf
- */
-void print_tasklist(tasklist_container* tasklist,
-                    category_container* context_list,
-                    category_container* project_list);
+bool
+unload_category_list (category_container *category_list);
 
 
 #endif // CORE_H

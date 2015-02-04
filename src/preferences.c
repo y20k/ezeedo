@@ -25,7 +25,10 @@
 /**
  * Shows the preferences window
  */
-void show_preferences_dialog (GSimpleAction *simple, GVariant *parameter, gpointer user_data)
+void
+show_preferences_dialog (GSimpleAction *simple,
+                         GVariant      *parameter,
+                         gpointer       user_data)
 {
     // define widgets
     GtkApplication *app;
@@ -109,7 +112,9 @@ void show_preferences_dialog (GSimpleAction *simple, GVariant *parameter, gpoint
 /**
  * Select file and save it to settings
  */
-void select_and_save_file (GtkButton *button, gpointer user_data)
+void
+select_and_save_file (GtkButton *button,
+                      gpointer   user_data)
 {
     GtkApplication *app;
     app = user_data;

@@ -24,7 +24,10 @@
 /**
  * Shows line of text within dialog window or in terminal
  */
-void show_info (GtkWidget *widget, gchar *text,  gboolean dialog_window)
+void
+show_info (GtkWidget *widget,
+           gchar     *text,
+           gboolean   dialog_window)
 {
     if (dialog_window && widget != NULL)
     {
@@ -40,7 +43,9 @@ void show_info (GtkWidget *widget, gchar *text,  gboolean dialog_window)
 /**
  * Display simple information dialog with given text
  */
-void display_info_dialog (GtkWidget *widget, gpointer user_data)
+void
+display_info_dialog (GtkWidget *widget,
+                     gpointer   user_data)
 {
     gchar *dialog_message;
     dialog_message = user_data;
@@ -68,7 +73,8 @@ void display_info_dialog (GtkWidget *widget, gpointer user_data)
 /**
  * Ask user for location of todo.txt file
  */
-gchar *open_file_dialog (GApplication *app)
+gchar
+*open_file_dialog (GApplication *app)
 {
     GtkWindow            *window;
     GtkWidget            *dialog;
@@ -113,7 +119,10 @@ gchar *open_file_dialog (GApplication *app)
 /**
  * Saves position and size of a given window
  */
-void save_window_position (GSimpleAction *simple, GVariant *parameter, gpointer user_data)
+void
+save_window_position (GSimpleAction *simple,
+                      GVariant *parameter,
+                      gpointer  user_data)
 {
     GtkWindow *window;
     GSettings *settings;
@@ -144,7 +153,8 @@ void save_window_position (GSimpleAction *simple, GVariant *parameter, gpointer 
 /**
  * Saves filename and location to gsettings
  */
-void save_file_name_location (gchar *file)
+void
+save_file_name_location (gchar *file)
 {
     GSettings *settings;
     settings = g_settings_new ("org.y20k.ezeedo");
@@ -160,7 +170,8 @@ void save_file_name_location (gchar *file)
 /**
  * Get current filename and location from gsettings
  */
-gchar *get_current_file_name_location (void)
+gchar
+*get_current_file_name_location (void)
 {
     GSettings *settings;
     gchar *file;
@@ -177,7 +188,10 @@ gchar *get_current_file_name_location (void)
 /**
  * Terminates application when hitting quit
  */
-void quit_application (GSimpleAction *simple, GVariant *parameter, gpointer user_data)
+void
+quit_application (GSimpleAction *simple,
+                  GVariant      *parameter,
+                  gpointer       user_data)
 {
     GApplication *app;
     GtkWindow    *win;
@@ -198,7 +212,10 @@ void quit_application (GSimpleAction *simple, GVariant *parameter, gpointer user
 /**
  * Terminates application when closing window
  */
-void close_window (GtkWidget *widget, GdkEvent *event, gpointer user_data)
+void
+close_window (GtkWidget *widget,
+              GdkEvent  *event,
+              gpointer   user_data)
 {
     GApplication *app;
 
@@ -217,7 +234,8 @@ void close_window (GtkWidget *widget, GdkEvent *event, gpointer user_data)
 /**
  * Saves tasklist to file
  */
-void autosave (ezeedo_wrapper_structure* ezeedo)
+void
+autosave (ezeedo_wrapper_structure* ezeedo)
 {
     gchar *todotxt_file;
 
@@ -232,7 +250,11 @@ void autosave (ezeedo_wrapper_structure* ezeedo)
 /**
  * Handles double-click on task
  */
-void task_doubleclicked (GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *col, gpointer user_data)
+void
+task_doubleclicked (GtkTreeView       *treeview,
+                    GtkTreePath       *path,
+                    GtkTreeViewColumn *col, 
+                    gpointer           user_data)
 {
     ezeedo_wrapper_structure* ezeedo;
     GtkTreeIter               filter_iter;
@@ -300,67 +322,103 @@ void task_doubleclicked (GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewCo
 /**
  * Handles single-click on category
  */
-void category_singleclicked(GtkTreeSelection *category_selection, gpointer user_data)
+void
+category_singleclicked (GtkTreeSelection *category_selection,
+                        gpointer          user_data)
 {
     ezeedo_wrapper_structure* ezeedo;
     GtkTreeModel*             selection_model;
     GtkTreeIter               iter;
     gint                      type;
     gint                      id;
+    gint                      selected_rows;
     GtkTreeModel*             category_filter;
     
     // get ezeedo from user data
     ezeedo = user_data;
 
-    // get input
-    gtk_tree_selection_get_selected (GTK_TREE_SELECTION (category_selection), &selection_model, &iter);
+    // get nunber of selected rows
+    selected_rows = gtk_tree_selection_count_selected_rows (GTK_TREE_SELECTION(category_selection));
 
-    // get category id and type
-    gtk_tree_model_get (selection_model, &iter, CATEGORY_ID, &id, -1);
-    gtk_tree_model_get (selection_model, &iter, CATEGORY_TYPE, &type, -1);
-    
-    // mark tasks as visible
-    change_task_visibility(ezeedo, type, id);
+    if (selected_rows != 0)
+    {
+        // get input
+        gtk_tree_selection_get_selected (GTK_TREE_SELECTION (category_selection), &selection_model, &iter);
+
+        // get category id and type
+        gtk_tree_model_get (selection_model, &iter, CATEGORY_ID, &id, -1);
+        gtk_tree_model_get (selection_model, &iter, CATEGORY_TYPE, &type, -1);
+
+        // deselect all on other category list
+        if (type == CATEGORYLIST_CONTEXTS)
+        {
+            reset_category_selection(ezeedo, CATEGORYLIST_PROJECTS);
+        }
+        else if (type == CATEGORYLIST_PROJECTS)
+        {
+            reset_category_selection(ezeedo, CATEGORYLIST_CONTEXTS);
+        }
+        else
+        {
+            return;
+        }
+        
+        // mark tasks as visible
+        change_task_visibility(ezeedo, type, id);
+
+        // create tree model filter
+        category_filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ezeedo->tasks_store), NULL );
+        gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(category_filter), TASK_FILTERED);
+
+        // create and display todolist widget
+        GtkWidget* filter_todolist;
+        GtkWidget* parent;
+        parent = gtk_widget_get_parent (ezeedo->todolist);
+        gtk_widget_destroy (ezeedo->todolist);
+
+        filter_todolist = display_tasklist (GTK_TREE_MODEL(category_filter));
+
+        g_signal_connect (filter_todolist, "row-activated", G_CALLBACK(task_doubleclicked), ezeedo);
+        
+        // add todolist to ezeedo wrapper structure
+        ezeedo->todolist = filter_todolist;    
+
+        gtk_container_add (GTK_CONTAINER (parent), filter_todolist);
+        gtk_widget_show_all (parent);
+        
+    }
+}
 
 
-    category_filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ezeedo->tasks_store), NULL );
-    gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(category_filter), TASK_FILTERED);
+/**
+ * Resets selection for given category list
+ */
+void
+reset_category_selection (ezeedo_wrapper_structure *ezeedo,
+                          gint                      type)
+{
+    GtkTreeView*      category_list;
+    GtkTreeSelection* category_selection;
+    gint               selected_rows;
 
-    // create and display todolist widget
-    GtkWidget* filter_todolist;
-    GtkWidget* parent;
-    parent = gtk_widget_get_parent (ezeedo->todolist);
-    gtk_widget_destroy (ezeedo->todolist);
-
-    filter_todolist = display_tasklist (GTK_TREE_MODEL(category_filter));
-
-    // add todolist to ezeedo wrapper structure
-    ezeedo->todolist = filter_todolist;    
-
-
-
-    gtk_container_add (GTK_CONTAINER (parent), filter_todolist);
-    gtk_widget_show_all (parent);
-    
-
-/*    gchar* name;
-    gtk_tree_model_get (model, &iter, CATEGORY_TITLE, &name, -1); 
     if (type == CATEGORYLIST_CONTEXTS)
     {
-        // DEBUGGING -> show content of row
-        char text[INFODIALOGLENGTH];
-        snprintf(text, INFODIALOGLENGTH,"Selected context title is: %s", name);
-        show_info(NULL, text, false);
-        show_info(GTK_WIDGET(ezeedo->window), text, true);
-        g_free(name);
+        category_list = GTK_TREE_VIEW(ezeedo->todo_contexts);
+    }
+    else if (type == CATEGORYLIST_PROJECTS) 
+    {
+        category_list = GTK_TREE_VIEW(ezeedo->todo_projects);
     }
     else
     {
-        // DEBUGGING -> show content of row
-        char text[INFODIALOGLENGTH];
-        snprintf(text, INFODIALOGLENGTH,"Selected project title is: %s", name);
-        show_info(NULL, text, false);
-        show_info(GTK_WIDGET(ezeedo->window), text, true);
-        g_free(name);
-    }*/
+        return;
+    }
+
+    category_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(category_list));
+    selected_rows      = gtk_tree_selection_count_selected_rows (GTK_TREE_SELECTION(category_selection));
+
+    if (selected_rows != 0)
+    {
+        gtk_tree_selection_unselect_all (GTK_TREE_SELECTION(category_selection));
+    }
 }

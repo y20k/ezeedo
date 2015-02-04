@@ -26,7 +26,9 @@
 /**
  * Handles task entry
  */
-void add_task_entry (GtkEntry *entry, gpointer user_data)
+void
+add_task_entry (GtkEntry *entry,
+                gpointer  user_data)
 {
     ezeedo_wrapper_structure* ezeedo;
     const gchar *input;

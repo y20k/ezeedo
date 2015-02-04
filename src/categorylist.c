@@ -18,12 +18,17 @@
 
 
 #include "categorylist.h"
-
+#include "helpers.h"
+#include "tasklist.h"
 
 /**
  * Creates widget containing categorylist
  */
-GtkWidget* display_category (ezeedo_wrapper_structure* ezeedo, category_container* category_list, const char* category_name, gint type)
+GtkWidget
+*display_category (ezeedo_wrapper_structure *ezeedo,
+                   category_container       *category_list,
+                   const char              *category_name,
+                   gint                      type)
 {
     GtkWidget*         view;
     GtkListStore*      categories_store;
@@ -67,8 +72,14 @@ GtkWidget* display_category (ezeedo_wrapper_structure* ezeedo, category_containe
     // destroy model automatically with view
     // g_object_unref (tasks_store); 
 
-    gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (view)), GTK_SELECTION_SINGLE);
+    GtkTreeSelection *category_selection;
+    category_selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(view));
+    gtk_tree_selection_set_mode (category_selection, GTK_SELECTION_BROWSE);
 
+
+    // detect single-click on contexts
+    g_signal_connect (category_selection, "changed", G_CALLBACK(category_singleclicked), ezeedo);
+    
     return (view);
 }
 
@@ -76,7 +87,10 @@ GtkWidget* display_category (ezeedo_wrapper_structure* ezeedo, category_containe
 /**
  * Determines if given category contains open tasks
  */
-gboolean category_contains_open_tasks(ezeedo_wrapper_structure* ezeedo, gint id, gint type)
+gboolean
+category_contains_open_tasks (ezeedo_wrapper_structure *ezeedo,
+                              gint                      id,
+                              gint                      type)
 {
     for (int i = 0; i < ezeedo->tasklist->number_of_tasks; i++)
     {
@@ -98,4 +112,41 @@ gboolean category_contains_open_tasks(ezeedo_wrapper_structure* ezeedo, gint id,
         }
     }
     return FALSE;
+}
+
+
+/**
+ * Shows all tasks and resets any category selections
+ */
+void
+show_all (GtkButton *button,
+          gpointer   user_data)
+{
+    ezeedo_wrapper_structure* ezeedo;
+    ezeedo = user_data;
+
+    reset_category_selection (ezeedo, CATEGORYLIST_CONTEXTS);
+    reset_category_selection (ezeedo, CATEGORYLIST_PROJECTS);
+
+    GtkTreeModel *filter_todo;
+    filter_todo = gtk_tree_model_filter_new(GTK_TREE_MODEL(ezeedo->tasks_store), NULL);
+    gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter_todo), TASK_NOTCOMPLETED);
+    
+    // create and display todolist widget
+    GtkWidget* filter_todolist;
+    GtkWidget* parent;
+    parent = gtk_widget_get_parent (ezeedo->todolist);
+    gtk_widget_destroy (ezeedo->todolist);
+
+    filter_todolist = display_tasklist (GTK_TREE_MODEL(filter_todo));
+
+    g_signal_connect (filter_todolist, "row-activated", G_CALLBACK(task_doubleclicked), ezeedo);
+    
+    // add todolist to ezeedo wrapper structure
+    ezeedo->todolist = filter_todolist;    
+
+    gtk_container_add (GTK_CONTAINER (parent), filter_todolist);
+    gtk_widget_show_all (parent);
+    
+    
 }
