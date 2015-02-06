@@ -32,27 +32,33 @@ load_tasklist_file (const char         *tasklist_file,
     if (strlen(tasklist_file) > TODOTXTFILELENGTH)
     {
         char text[INFODIALOGLENGTH];
-        snprintf(text, INFODIALOGLENGTH,"Path and filename longer than %d characters", TODOTXTFILELENGTH);
-        show_info(NULL, text, FALSE);
+        snprintf (text, INFODIALOGLENGTH,"Path and filename longer than %d characters", TODOTXTFILELENGTH);
+        show_info (NULL,
+                   text,
+                   false);
         return false;
     }
 
     // open todo.txt file
-    FILE* fp = fopen(tasklist_file, "r");
+    FILE *fp = fopen(tasklist_file, "r");
 
     // check for successful open
     if (fp == NULL)
     {
         char text[INFODIALOGLENGTH];
-        snprintf(text, INFODIALOGLENGTH,"Could not open %s", tasklist_file);
-        show_info(NULL, text, FALSE);
+        snprintf (text, INFODIALOGLENGTH,"Could not open %s", tasklist_file);
+        show_info (NULL,
+                   text,
+                   false);
         return false;
     }
     else
     {
         char text[INFODIALOGLENGTH];
-        snprintf(text, INFODIALOGLENGTH,"Sucessfully opened %s", tasklist_file);
-        show_info(NULL, text, FALSE);
+        snprintf (text, INFODIALOGLENGTH,"Sucessfully opened %s", tasklist_file);
+        show_info (NULL,
+                   text,
+                   false);
     }
 
     // initialize some variables
@@ -61,7 +67,7 @@ load_tasklist_file (const char         *tasklist_file,
     while (textlist->number_of_lines < TASKLISTLENGTH)
     {
         // create new text line
-        textline* new_line = calloc(1, sizeof(textline));
+        textline *new_line = calloc (1, sizeof(textline));
         if (new_line == NULL)
         {
             return false;
@@ -75,16 +81,18 @@ load_tasklist_file (const char         *tasklist_file,
             if (new_line->line_length > TASKLENGTH)
             {
                 char text[INFODIALOGLENGTH];
-                snprintf(text, INFODIALOGLENGTH,"Unable to read tasks longer than %d characters.", TASKLENGTH);
-                show_info(NULL, text, FALSE);
-                fclose(fp);
+                snprintf (text, INFODIALOGLENGTH,"Unable to read tasks longer than %d characters.", TASKLENGTH);
+                show_info (NULL,
+                           text,
+                           false);
+                fclose (fp);
                 return false;
             }
             // handle end of file
             if (feof(fp))
             {
                 free (new_line);
-                fclose(fp);
+                fclose (fp);
                 return true;
             }
 
@@ -95,7 +103,7 @@ load_tasklist_file (const char         *tasklist_file,
             }
             new_line->line_length++;
         }
-        
+ 
         // finish line
         new_line->raw_line[new_line->line_length] = '\0';
         new_line->line_length++;
@@ -105,7 +113,7 @@ load_tasklist_file (const char         *tasklist_file,
         {
             free (new_line);
         }
-        
+ 
         // add line to textlist
         else
         {
@@ -116,7 +124,7 @@ load_tasklist_file (const char         *tasklist_file,
     }
 
     // close todo.txt
-    fclose(fp);
+    fclose (fp);
 
     return true;
 }
@@ -134,12 +142,16 @@ parse_textlist (textlist_container *textlist,
     // for each line within textlist
     for (int i = 0; i < textlist->number_of_lines; i++)
     {
-        bool added = add_task_to_tasklist(textlist->line[i]->raw_line, tasklist, context_list, project_list);
+        bool added = add_task_to_tasklist (textlist->line[i]->raw_line,
+                                           tasklist, context_list,
+                                           project_list);
         if (!added)
         {
             char text[INFODIALOGLENGTH];
-            snprintf(text, INFODIALOGLENGTH,"Could not add line no. %d to tasklist.", i);
-            show_info(NULL, text, FALSE);
+            snprintf (text, INFODIALOGLENGTH,"Could not add line no. %d to tasklist.", i);
+            show_info (NULL,
+                       text,
+                       false);
             return false;
         }
     }
@@ -160,19 +172,21 @@ add_line_to_textlist (const char         *line,
     if (strlen(line) > TASKLENGTH)
     {
         char text[INFODIALOGLENGTH];
-        snprintf(text, INFODIALOGLENGTH,"Unable to write tasks longer than %d characters.", TASKLENGTH);
-        show_info(NULL, text, FALSE);
+        snprintf (text, INFODIALOGLENGTH,"Unable to write tasks longer than %d characters.", TASKLENGTH);
+        show_info (NULL,
+                   text,
+                   false);
         return false;
     }
 
     // create new text line
-    textline* new_line = calloc(1, sizeof(textline));
+    textline* new_line = calloc (1, sizeof(textline));
     if (new_line == NULL)
     {
         return false;
     }
-    new_line->id          = textlist->number_of_lines;
-    strcpy(new_line->raw_line, line);
+    new_line->id = textlist->number_of_lines;
+    strcpy (new_line->raw_line, line);
     new_line->line_length = strlen(line);
 
     // add line to textlist
@@ -192,21 +206,25 @@ save_textlist_to_file (textlist_container *textlist,
 {
 
     // open todo.txt file
-    FILE* fp = fopen(tasklist_file, "w");
+    FILE *fp = fopen(tasklist_file, "w");
 
     // check for successful open
     if (fp == NULL)
     {
         char text[INFODIALOGLENGTH];
-        snprintf(text, INFODIALOGLENGTH,"Could not open %s.", tasklist_file);
-        show_info(NULL, text, FALSE);
+        snprintf (text, INFODIALOGLENGTH,"Could not open %s.", tasklist_file);
+        show_info (NULL,
+                   text,
+                   false);
         return false;
     }
     else
     {
         char text[INFODIALOGLENGTH];
-        snprintf(text, INFODIALOGLENGTH,"Sucessfully opened %s.", tasklist_file);
-        show_info(NULL, text, FALSE);
+        snprintf (text, INFODIALOGLENGTH,"Sucessfully opened %s.", tasklist_file);
+        show_info (NULL,
+                   text,
+                   false);
     }
 
     // for each line
@@ -222,15 +240,15 @@ save_textlist_to_file (textlist_container *textlist,
             while (textlist->line[i]->raw_line[j] != '\0' &&
                    j < textlist->line[i]->line_length)
             {
-                fputc(textlist->line[i]->raw_line[j], fp);
+                fputc (textlist->line[i]->raw_line[j], fp);
                 j++;
             }
-            fputc('\n', fp);
+            fputc ('\n', fp);
         }
     }
 
     // close todo.txt
-    fclose(fp);
+    fclose (fp);
 
     return true;
 }
@@ -253,12 +271,17 @@ add_task_to_tasklist (const char         *line,
     }
     new_task->id = tasklist->number_of_tasks;
 
-    bool task_created = create_new_task(line, new_task, context_list, project_list);
+    bool task_created = create_new_task (line,
+                                         new_task,
+                                         context_list,
+                                         project_list);
     if (!task_created)
     {
         char text[INFODIALOGLENGTH];
-        snprintf(text, INFODIALOGLENGTH,"Could not create task from given input\n%s", line);
-        show_info(NULL, text, FALSE);
+        snprintf (text, INFODIALOGLENGTH,"Could not create task from given input\n%s", line);
+        show_info (NULL,
+                   text,
+                   false);
         return false;
     }
 
@@ -281,7 +304,7 @@ create_new_task (const char         *line,
 {
 
     // initialize some variables
-    int  line_length = (strlen(line)) + 1;
+    int  line_length                   = (strlen(line)) + 1;
     int  line_character_counter        = 0;
     int  word_character_counter        = 0;
     int  description_character_counter = 0;
@@ -293,8 +316,10 @@ create_new_task (const char         *line,
         if (word_character_counter >= WORDLENGTH)
         {
             char text[INFODIALOGLENGTH];
-            snprintf(text, INFODIALOGLENGTH,"Word is longer than %d characters\n%s", WORDLENGTH, line);
-            show_info(NULL, text, FALSE);
+            snprintf (text, INFODIALOGLENGTH,"Word is longer than %d characters\n%s", WORDLENGTH, line);
+            show_info (NULL,
+                       text,
+                       false);
             return false;
         }
 
@@ -312,20 +337,28 @@ create_new_task (const char         *line,
                 word_character_counter = 0;
             }
             // task priority
-            else if (check_task_priority(word, word_character_counter, new_task))
+            else if (check_task_priority (word,
+                                          word_character_counter,
+                                          new_task))
             {
                 new_task->priority = word[1];
                 word_character_counter = 0;
             }
 
             // task context
-            else if (check_task_context(word, word_character_counter, context_list, new_task))
+            else if (check_task_context (word,
+                                         word_character_counter,
+                                         context_list,
+                                         new_task))
             {
                 word_character_counter = 0;
             }
 
             // task project
-            else if (check_task_project(word, word_character_counter, project_list, new_task))
+            else if (check_task_project (word,
+                                         word_character_counter,
+                                         project_list,
+                                         new_task))
             {
                 word_character_counter = 0;
             }
@@ -418,12 +451,15 @@ check_task_context (char               *word,
     {
         // get context id for the given word
 
-        int context_id = get_category_id('@', word, word_length, context_list);
+        int context_id = get_category_id ('@',
+                                          word,
+                                          word_length,
+                                          context_list);
         // context is a new in context list
         if (context_id == TASKLISTLENGTH+1)
         {
             // create new context
-            category* new_context = calloc(1,sizeof(category));
+            category* new_context = calloc (1,sizeof(category));
             if (new_context == NULL)
             {
                 return false;
@@ -442,8 +478,7 @@ check_task_context (char               *word,
             new_context->title[i] = '\0';
 
             // put new context into context list
-            context_list->list[context_list->number_of_categories] =
-            new_context;
+            context_list->list[context_list->number_of_categories] = new_context;
 
             // put context id into task
             new_task->context[new_task->number_of_contexts] = new_context->id;
@@ -540,9 +575,9 @@ check_task_project (char               *word,
  */
 int
 get_category_id (const char           category_identifier,
-                 char*                word,
+                 char                *word,
                  const int            word_length,
-                 category_container *category_list)
+                 category_container  *category_list)
 {
     // strip category identifier (e.g. @) and trailing space
     int i = 0;
@@ -641,8 +676,8 @@ compare_current_to_next (task *current_task,
 {
     // determine maximum length for comparison of descriptions
     int maximum_length;
-    int current_task_length = strlen(current_task->description);
-    int next_task_length    = strlen(next_task->description);
+    int current_task_length = strlen (current_task->description);
+    int next_task_length    = strlen (next_task->description);
     if (current_task_length < next_task_length)
     {
         maximum_length = current_task_length;
@@ -676,8 +711,8 @@ compare_current_to_next (task *current_task,
     {
         for (int i = 0; i < maximum_length; i ++)
         {
-            int current_task_character = (tolower(current_task->description[i]));
-            int next_task_character    = (tolower(next_task->description[i]));
+            int current_task_character = tolower(current_task->description[i]);
+            int next_task_character    = tolower(next_task->description[i]);
             if (current_task_character < next_task_character)
             {
                 return true;
@@ -700,7 +735,7 @@ void
 sort_tasklist (tasklist_container* tasklist)
 {
     // create a temporary task
-    task* tmp = malloc(sizeof(task));
+    task *tmp = malloc(sizeof(task));
 
     for (int i = 0; i < tasklist->number_of_tasks; i++)
     {
@@ -733,15 +768,15 @@ mark_task_done (const int           id,
     // mark task done in tasklist
     if (!tasklist->list[id]->completed)
     {
-        tasklist->list[id]->completed = TRUE;
+        tasklist->list[id]->completed = true;
     }
 
     // mark task done in textlist
-    if (strcmp("x", &textlist->line[id]->raw_line[0])!=0)
+    if (strcmp("x", &textlist->line[id]->raw_line[0]) != 0)
     {
         char new_line[TASKLENGTH+1];
         // add x to raw line
-        snprintf(new_line, TASKLENGTH, "x %s", textlist->line[id]->raw_line);
+        snprintf (new_line, TASKLENGTH, "x %s", textlist->line[id]->raw_line);
         // increase line length
         textlist->line[id]->line_length = textlist->line[id]->line_length  + 2;
         // copy new line to textlist
@@ -777,7 +812,7 @@ delete_task (const int           id,
         // found the right line
         if (textlist->line[i]->id == id)
         {
-            textlist->line[i]->raw_line[0] ='\0';
+            textlist->line[i]->raw_line[0] = '\0';
             textlist->line[i]->line_length = 0;
             line_deleted = true;
         }

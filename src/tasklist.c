@@ -35,32 +35,51 @@ GtkWidget
 
     // Column 1: Priority
     renderer = gtk_cell_renderer_text_new ();
-    col = gtk_tree_view_column_new_with_attributes ("Priority", renderer, "text", TASK_PRIORITY, NULL);
-    gtk_tree_view_column_set_resizable (col, TRUE);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
+    col = gtk_tree_view_column_new_with_attributes ("Priority",
+                                                    renderer,
+                                                    "text", TASK_PRIORITY,
+                                                    NULL);
+    gtk_tree_view_column_set_resizable (col,
+                                        true);
+    gtk_tree_view_append_column (GTK_TREE_VIEW(view),
+                                 col);
 
     // Column 2: Description
     renderer = gtk_cell_renderer_text_new ();
-    col = gtk_tree_view_column_new_with_attributes ("Description", renderer, "text", TASK_DESCRIPTION, NULL);
-    gtk_tree_view_column_set_resizable (col, TRUE);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
+    col = gtk_tree_view_column_new_with_attributes ("Description",
+                                                    renderer,
+                                                    "text", TASK_DESCRIPTION,
+                                                    NULL);
+    gtk_tree_view_column_set_resizable (col,
+                                        true);
+    gtk_tree_view_append_column (GTK_TREE_VIEW(view),
+                                 col);
 
     // Column 3: Project
     renderer = gtk_cell_renderer_text_new ();
-    col = gtk_tree_view_column_new_with_attributes ("Project", renderer, "text", TASK_PROJECT, NULL);
-    gtk_tree_view_column_set_resizable (col, TRUE);
+    col = gtk_tree_view_column_new_with_attributes ("Project",
+                                                    renderer,
+                                                    "text", TASK_PROJECT,
+                                                    NULL);
+    gtk_tree_view_column_set_resizable (col, true);
     gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
 
     // Column 4: Context
     renderer = gtk_cell_renderer_text_new ();
-    col = gtk_tree_view_column_new_with_attributes ("Context", renderer, "text", TASK_CONTEXT, NULL);
-    gtk_tree_view_column_set_resizable (col, TRUE);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
+    col = gtk_tree_view_column_new_with_attributes ("Context",
+                                                    renderer,
+                                                    "text", TASK_CONTEXT,
+                                                    NULL);
+    gtk_tree_view_column_set_resizable (col,
+                                        true);
+    gtk_tree_view_append_column (GTK_TREE_VIEW(view),
+                                 col);
 
     // destroy model automatically with view
     // g_object_unref (tasks_store); 
 
-    gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (view)), GTK_SELECTION_SINGLE);
+    gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW(view)),
+                                 GTK_SELECTION_SINGLE);
 
     return (view);
 }
@@ -103,9 +122,12 @@ void
 
     for (int i = 0; i < ezeedo->tasklist->number_of_tasks; i++)
     {
-        add_task_to_taskstore (i, iter, ezeedo);
+        add_task_to_taskstore (i,
+                               iter,
+                               ezeedo);
     }
 
+// TODO rework return -> is a void function!
     return (tasks_store);
 }
 
@@ -169,7 +191,8 @@ add_task_to_taskstore (gint                      task_id,
     }
 
     // acquire an iterator 
-    gtk_list_store_append (GTK_LIST_STORE(ezeedo->tasks_store), &iter);
+    gtk_list_store_append (GTK_LIST_STORE(ezeedo->tasks_store),
+                           &iter);
 
     gtk_list_store_set (GTK_LIST_STORE(ezeedo->tasks_store), &iter,
                         TASK_ID,           ezeedo->tasklist->list[task_id]->id, 
@@ -178,8 +201,8 @@ add_task_to_taskstore (gint                      task_id,
                         TASK_CONTEXT,      context, 
                         TASK_PROJECT,      project, 
                         TASK_COMPLETED,    ezeedo->tasklist->list[task_id]->completed,
-                        TASK_NOTCOMPLETED, ! (ezeedo->tasklist->list[task_id]->completed),
-                        TASK_FILTERED,     FALSE,
+                        TASK_NOTCOMPLETED, !(ezeedo->tasklist->list[task_id]->completed),
+                        TASK_FILTERED,     false,
                         -1);
     return;
 }
@@ -196,31 +219,46 @@ change_task_visibility (ezeedo_wrapper_structure *ezeedo,
     GtkTreeIter iter;
 
     // get first row
-    gtk_tree_model_get_iter_first(GTK_TREE_MODEL(ezeedo->tasks_store), &iter);
- 
+    gtk_tree_model_get_iter_first (GTK_TREE_MODEL(ezeedo->tasks_store),
+                                   &iter);
+
     for (int i = 0; i < ezeedo->tasklist->number_of_tasks; i++)
     {
         // exclude completed tasks and non-categorized ones
-        if (((ezeedo->tasklist->list[i]->number_of_contexts != 0) || (ezeedo->tasklist->list[i]->number_of_projects != 0)) &&            (!ezeedo->tasklist->list[i]->completed))
+        if (((ezeedo->tasklist->list[i]->number_of_contexts != 0) ||
+             (ezeedo->tasklist->list[i]->number_of_projects != 0)) &&
+            (!ezeedo->tasklist->list[i]->completed))
         {
             // if given context matches set filtered flag
-            if ((category_type == CATEGORYLIST_CONTEXTS) && (category_id == ezeedo->tasklist->list[i]->context[0]))
+            if ((category_type == CATEGORYLIST_CONTEXTS) &&
+                (category_id == ezeedo->tasklist->list[i]->context[0]))
             {
-                gtk_list_store_set (GTK_LIST_STORE(ezeedo->tasks_store), &iter, TASK_FILTERED, TRUE, -1);
+                gtk_list_store_set (GTK_LIST_STORE(ezeedo->tasks_store),
+                                    &iter,
+                                    TASK_FILTERED, true,
+                                    -1);
             }
             // if given project matches set filtered flag
-            else if ((category_type == CATEGORYLIST_PROJECTS) && (category_id == ezeedo->tasklist->list[i]->project[0]))
+            else if ((category_type == CATEGORYLIST_PROJECTS) &&
+                     (category_id == ezeedo->tasklist->list[i]->project[0]))
             {
-                gtk_list_store_set (GTK_LIST_STORE(ezeedo->tasks_store), &iter, TASK_FILTERED, TRUE, -1);
+                gtk_list_store_set (GTK_LIST_STORE(ezeedo->tasks_store),
+                                    &iter,
+                                    TASK_FILTERED, true,
+                                    -1);
             }
             else 
             {
-                gtk_list_store_set (GTK_LIST_STORE(ezeedo->tasks_store), &iter, TASK_FILTERED, FALSE, -1);
+                gtk_list_store_set (GTK_LIST_STORE(ezeedo->tasks_store),
+                                    &iter,
+                                    TASK_FILTERED, false,
+                                    -1);
             }
         }
 
         // make iter point to next row
-        gtk_tree_model_iter_next (GTK_TREE_MODEL(ezeedo->tasks_store), &iter);
+        gtk_tree_model_iter_next (GTK_TREE_MODEL(ezeedo->tasks_store),
+                                  &iter);
     }
     return;
 }

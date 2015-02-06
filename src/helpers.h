@@ -49,8 +49,8 @@ gchar
  */
 void
 save_window_position (GSimpleAction *simple,
-                      GVariant *parameter,
-                      gpointer  user_data);
+                      GVariant      *parameter,
+                      gpointer       user_data);
 
 /**
  * Saves filename and location to gsettings

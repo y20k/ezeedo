@@ -251,9 +251,9 @@ check_task_project (char               *word,
  */
 int
 get_category_id (const char           category_identifier,
-                 char*                word,
+                 char                *word,
                  const int            word_length,
-                 category_container *category_list);
+                 category_container  *category_list);
 
 
 /**

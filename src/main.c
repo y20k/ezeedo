@@ -30,15 +30,25 @@ main (int   argc,
 {
 
     // create a gtk application
-    int status;
+    int            status;
     GtkApplication *app;
-    app = gtk_application_new ("org.y20k.ezeedo", G_APPLICATION_FLAGS_NONE);
 
-    g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
-    g_signal_connect (app, "startup", G_CALLBACK (startup), NULL);
+    app = gtk_application_new ("org.y20k.ezeedo",
+                               G_APPLICATION_FLAGS_NONE);
+
+    g_signal_connect (app,
+                      "activate",
+                      G_CALLBACK (activate),
+                      NULL);
+    g_signal_connect (app,
+                      "startup",
+                      G_CALLBACK (startup),
+                      NULL);
 
     // start application
-    status = g_application_run (G_APPLICATION (app), argc, argv);
+    status = g_application_run (G_APPLICATION (app),
+                                argc,
+                                argv);
 
     // free memory
     g_object_unref (app);

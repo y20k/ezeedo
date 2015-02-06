@@ -74,13 +74,13 @@ show_preferences_dialog (GSimpleAction *simple,
     gtk_widget_set_halign (GTK_WIDGET(select_file_label), GTK_ALIGN_START);
     gtk_widget_set_margin_start (GTK_WIDGET(select_file_label), 10);
 
-    
+ 
     current_file_entry = gtk_entry_new ();
-    gtk_widget_set_sensitive (GTK_WIDGET(current_file_entry), FALSE);
+    gtk_widget_set_sensitive (GTK_WIDGET(current_file_entry), false);
 	gtk_entry_set_text (GTK_ENTRY(current_file_entry), todotxt_file);
     // gtk_widget_set_halign (GTK_WIDGET(current_file_entry), GTK_ALIGN_START);
-    gtk_widget_set_hexpand (GTK_WIDGET(current_file_entry), TRUE);
-    
+    gtk_widget_set_hexpand (GTK_WIDGET(current_file_entry), true);
+ 
     select_file_button = gtk_button_new_with_label ("Select New File");
     gtk_widget_set_halign (GTK_WIDGET(select_file_button), GTK_ALIGN_START);
 
@@ -126,7 +126,7 @@ select_and_save_file (GtkButton *button,
     todotxt_file_new = open_file_dialog (G_APPLICATION(app));
     todotxt_file     = get_current_file_name_location ();
 
-    
+ 
     // if changed save new file name and location
     if (todotxt_file_new != NULL && strcmp (todotxt_file,todotxt_file_new) != 0)
     {
