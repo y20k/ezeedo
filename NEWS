@@ -1,4 +1,11 @@
 -----------------------------------------------------------------------
+Ezeedo 0.2 (black country rock) - 18 February 2015
+-----------------------------------------------------------------------
+- sidebar visibility can be toggled now
+- replaced show all button with show all filter
+- more code clean-up
+
+-----------------------------------------------------------------------
 Ezeedo 0.2 (black country rock) - 4 February 2015
 -----------------------------------------------------------------------
 - Ezeedo can mark filtered tasks as done
