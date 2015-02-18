@@ -32,6 +32,8 @@ GtkWidget
     GtkCellRenderer     *renderer;
 
     view = gtk_tree_view_new_with_model (GTK_TREE_MODEL (model));
+    gtk_widget_set_vexpand (view,
+                            true);
 
     // Column 1: Priority
     renderer = gtk_cell_renderer_text_new ();
@@ -102,7 +104,6 @@ GtkListStore
                                       G_TYPE_BOOLEAN,  // notcompleted
                                       G_TYPE_BOOLEAN); // filtered
 
-
     return (tasks_store);
 } 
 
@@ -111,12 +112,8 @@ GtkListStore
  * Fills tasks into given task store
  */
 void
-*fill_tasks_store (ezeedo_wrapper_structure *ezeedo)
+fill_tasks_store (ezeedo_wrapper_structure *ezeedo)
 {
-
-    GtkListStore *tasks_store;
-    tasks_store = create_tasks_store ();
-
     // create iterator
     GtkTreeIter iter;
 
@@ -126,9 +123,6 @@ void
                                iter,
                                ezeedo);
     }
-
-// TODO rework return -> is a void function!
-    return (tasks_store);
 }
 
 

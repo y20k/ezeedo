@@ -26,6 +26,12 @@
       <default>480</default>
     </key>
 
+    <key type='i' name='sidebar-size'>
+      <summary>Sidebar size</summary>
+      <description>Size of the sidebar</description>
+      <default>150</default>
+    </key>
+
     <key type='s' name='todo-txt-file'>
       <summary>Todo.txt file</summary>
       <description>Location and name of the todo.txt file</description>

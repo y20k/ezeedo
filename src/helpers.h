@@ -45,6 +45,14 @@ gchar
 *open_file_dialog (GApplication *app);
 
 /**
+ * Toggles visibility of sidebar
+ */
+void
+toggle_sidebar (GSimpleAction *simple,
+                GVariant      *parameter,
+                gpointer       user_data);
+
+/**
  * Saves position and size of given window to gsettings
  */
 void

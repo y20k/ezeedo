@@ -19,6 +19,7 @@
 
 #include "helpers.h"
 #include "tasklist.h"
+#include "categorylist.h"
 
 
 /**
@@ -133,6 +134,49 @@ gchar
 
 
 /**
+ * Toggles visibility of sidebar
+ */
+void
+toggle_sidebar (GSimpleAction *simple,
+                GVariant      *parameter,
+                gpointer       user_data)
+{
+    // get ezeedo from user data
+    ezeedo_wrapper_structure *ezeedo;
+    ezeedo = user_data;
+
+    // create variables containing sidebar sizes
+    gint size_saved;
+    gint size_current;
+    
+    // get saved sidebar size from gsettings store
+    GSettings *settings;
+    settings   = g_settings_new     ("org.y20k.ezeedo");
+    size_saved = g_settings_get_int (settings,
+                                     "sidebar-size");
+    g_object_unref (settings);
+
+    // get current sidebar size
+    size_current = gtk_paned_get_position (GTK_PANED(ezeedo->todo_paned));
+
+    // hide sidebar and show all todos
+    if (size_current != 0)
+    {
+        gtk_paned_set_position (GTK_PANED(ezeedo->todo_paned),
+                                0);
+        show_all (NULL,
+                  ezeedo);
+    }
+    // show sidebar
+    else
+    {
+        gtk_paned_set_position (GTK_PANED(ezeedo->todo_paned),
+                                size_saved);
+    }
+}
+
+
+/**
  * Saves position and size of a given window
  */
 void
@@ -140,25 +184,27 @@ save_window_position (GSimpleAction *simple,
                       GVariant      *parameter,
                       gpointer       user_data)
 {
-    GtkWindow *window;
     GSettings *settings;
-    int x;
-    int y;
-    int width;
-    int height;
+    gint x;
+    gint y;
+    gint width;
+    gint height;
+    gint sidebar_size;
+    
+    // get ezeedo from user data
+    ezeedo_wrapper_structure *ezeedo;
+    ezeedo = user_data;
 
-    // get window position and size
-    window = user_data;
-    gtk_window_get_position (GTK_WINDOW(window),
+    gtk_window_get_position (GTK_WINDOW(ezeedo->window),
                              &x,
                              &y);
-    gtk_window_get_size (GTK_WINDOW(window),
+    gtk_window_get_size (GTK_WINDOW(ezeedo->window),
                          &width,
                          &height);
-
+    sidebar_size = gtk_paned_get_position (GTK_PANED(ezeedo->todo_paned));
+    
     // save changes to settings 
     settings = g_settings_new ("org.y20k.ezeedo");
-
     g_settings_set_int (settings,
                         "main-window-position-x",
                         x);
@@ -171,7 +217,9 @@ save_window_position (GSimpleAction *simple,
     g_settings_set_int (settings,
                         "main-window-height",
                         height);
-
+    g_settings_set_int (settings,
+                        "sidebar-size",
+                        sidebar_size);
     g_object_unref (settings);
 
     return;
@@ -224,16 +272,15 @@ quit_application (GSimpleAction *simple,
                   GVariant      *parameter,
                   gpointer       user_data)
 {
-    GApplication *app;
-    GtkWindow    *win;
+    // get ezeedo from user data
+    ezeedo_wrapper_structure *ezeedo;
+    ezeedo = user_data;
 
-    app = user_data;
-    win = gtk_application_get_active_window (GTK_APPLICATION(app));
     save_window_position (NULL,
                           NULL,
-                          win);
+                          ezeedo);
 
-    g_application_quit (app); 
+    g_application_quit (G_APPLICATION(ezeedo->application)); 
 
     return;
 }
@@ -247,12 +294,15 @@ close_window (GtkWidget *widget,
               GdkEvent  *event,
               gpointer   user_data)
 {
-    GApplication *app;
+    // get ezeedo from user data
+    ezeedo_wrapper_structure *ezeedo;
+    ezeedo = user_data;
 
-    app = user_data;
-    save_window_position (NULL, NULL, GTK_WINDOW(widget));
+    save_window_position (NULL,
+                          NULL,
+                          ezeedo);
 
-    g_application_quit (app); 
+    g_application_quit (G_APPLICATION(ezeedo->application)); 
 
     return;
 }
@@ -404,6 +454,10 @@ category_singleclicked (GtkTreeSelection *category_selection,
                             CATEGORY_TYPE, &type,
                             -1);
 
+        // deselect the show all option 
+        reset_category_selection (ezeedo,
+                                  CATEGORYLIST_ALL);
+
         // deselect all on other category list
         if (type == CATEGORYLIST_CONTEXTS)
         {
@@ -419,7 +473,7 @@ category_singleclicked (GtkTreeSelection *category_selection,
         {
             return;
         }
- 
+        
         // mark tasks as visible
         change_task_visibility (ezeedo,
                                 type,
@@ -471,6 +525,10 @@ reset_category_selection (ezeedo_wrapper_structure *ezeedo,
     else if (type == CATEGORYLIST_PROJECTS) 
     {
         category_list = GTK_TREE_VIEW(ezeedo->todo_projects);
+    }
+    else if (type == CATEGORYLIST_ALL) 
+    {
+        category_list = GTK_TREE_VIEW(ezeedo->todo_showall);
     }
     else
     {

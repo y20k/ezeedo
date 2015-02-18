@@ -123,32 +123,89 @@ category_contains_open_tasks (ezeedo_wrapper_structure *ezeedo,
 
 
 /**
+ * Creates widget containing a show all option
+ */
+GtkWidget
+*display_show_all (ezeedo_wrapper_structure *ezeedo)
+{
+    GtkWidget*         view;
+    GtkListStore*      categories_store;
+    GtkTreeViewColumn* col;
+    GtkCellRenderer*   renderer;
+ 
+    categories_store = gtk_list_store_new (CATEGORY_COLUMNS, // total number of colums
+                                           G_TYPE_INT,       // id
+                                           G_TYPE_STRING,    // category
+                                           G_TYPE_INT);      // type
+
+    // create iterator
+    GtkTreeIter iter;
+
+    // acquire an iterator 
+    gtk_list_store_append (categories_store,
+                           &iter);
+
+    gtk_list_store_set (categories_store, &iter,
+                        CATEGORY_TITLE, "Show all",
+                        -1);
+
+    view = gtk_tree_view_new_with_model (GTK_TREE_MODEL (categories_store));
+
+    // Column 1: category title
+    renderer = gtk_cell_renderer_text_new ();
+    col = gtk_tree_view_column_new_with_attributes ("Categories",
+                                                    renderer,
+                                                    "text", CATEGORY_TITLE,
+                                                    NULL);
+    gtk_tree_view_append_column (GTK_TREE_VIEW(view),
+                                 col);
+
+    // destroy model automatically with view
+    // g_object_unref (tasks_store); 
+
+    GtkTreeSelection *category_selection;
+    category_selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(view));
+    gtk_tree_selection_set_mode (category_selection,
+                                 GTK_SELECTION_BROWSE);
+
+    // detect single-click on contexts
+    g_signal_connect (category_selection, "changed",
+                      G_CALLBACK(show_all), ezeedo);
+    
+    return (view);
+}
+
+
+/**
  * Shows all tasks and resets any category selections
  */
 void
-show_all (GtkButton *button,
-          gpointer   user_data)
+show_all (GtkTreeSelection *category_selection,
+          gpointer          user_data)
 {
+    GtkTreeModel             *filter_todo;
+    GtkWidget                *filter_todolist;
+    GtkWidget                *parent;
     ezeedo_wrapper_structure *ezeedo;
+
+    // get ezeedo from user_data
     ezeedo = user_data;
 
+    // deselect any selected category
     reset_category_selection (ezeedo,
                               CATEGORYLIST_CONTEXTS);
     reset_category_selection (ezeedo,
                               CATEGORYLIST_PROJECTS);
 
-    GtkTreeModel *filter_todo;
+    // create tree model containing open tasks
     filter_todo = gtk_tree_model_filter_new (GTK_TREE_MODEL(ezeedo->tasks_store),
                                              NULL);
     gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER(filter_todo),
                                               TASK_NOTCOMPLETED);
  
     // create and display todolist widget
-    GtkWidget *filter_todolist;
-    GtkWidget *parent;
     parent = gtk_widget_get_parent (ezeedo->todolist);
     gtk_widget_destroy (ezeedo->todolist);
-
     filter_todolist = display_tasklist (GTK_TREE_MODEL(filter_todo));
 
     g_signal_connect (filter_todolist, "row-activated",
@@ -160,6 +217,7 @@ show_all (GtkButton *button,
     gtk_container_add (GTK_CONTAINER(parent),
                        filter_todolist);
     gtk_widget_show_all (parent);
- 
+
+    return;
  
 }

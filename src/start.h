@@ -39,6 +39,18 @@ startup (GApplication *app,
          gpointer      user_data);
 
 /**
+ * Creates empty main application window
+ */
+GtkWidget
+*create_mainwindow (ezeedo_wrapper_structure *ezeedo);
+
+/**
+ * Creates gear menu
+ */
+GtkWidget
+*create_gearmenu (ezeedo_wrapper_structure *ezeedo);
+
+/**
  * Shows the about window
  */
 void

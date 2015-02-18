@@ -40,7 +40,7 @@ GtkListStore
  * Fills tasks into given task store
  */
 void
-*fill_tasks_store (ezeedo_wrapper_structure *ezeedo);
+fill_tasks_store (ezeedo_wrapper_structure *ezeedo);
 
 /**
  * Adds one task to task store

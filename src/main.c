@@ -29,29 +29,36 @@ main (int   argc,
       char *argv[])
 {
 
+    // create convenience wrapper structure for important elements
+    ezeedo_wrapper_structure *ezeedo = calloc (1, sizeof(ezeedo_wrapper_structure));
+    // TODO free ezeedo structure
+
     // create a gtk application
-    int            status;
-    GtkApplication *app;
+    gint           status;
+    GtkApplication *application;
+   
+    application = gtk_application_new ("org.y20k.ezeedo",
+                                       G_APPLICATION_FLAGS_NONE);
 
-    app = gtk_application_new ("org.y20k.ezeedo",
-                               G_APPLICATION_FLAGS_NONE);
-
-    g_signal_connect (app,
+    // add application to ezeedo wrapper structure
+    ezeedo->application = application;
+    
+    g_signal_connect (application,
                       "activate",
                       G_CALLBACK (activate),
-                      NULL);
-    g_signal_connect (app,
+                      ezeedo);
+    g_signal_connect (application,
                       "startup",
                       G_CALLBACK (startup),
-                      NULL);
+                      ezeedo);
 
     // start application
-    status = g_application_run (G_APPLICATION (app),
+    status = g_application_run (G_APPLICATION (application),
                                 argc,
                                 argv);
 
     // free memory
-    g_object_unref (app);
+    g_object_unref (ezeedo);
 
     return status;
 }

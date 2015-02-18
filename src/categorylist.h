@@ -34,6 +34,12 @@ GtkWidget
                    gint                      type);
 
 /**
+ * Creates widget containing a show all option
+ */
+GtkWidget
+*display_show_all (ezeedo_wrapper_structure *ezeedo);
+
+/**
  * Determines if given category contains open tasks
  */
 gboolean
@@ -45,8 +51,8 @@ category_contains_open_tasks (ezeedo_wrapper_structure *ezeedo,
  * Shows all tasks and resets any category selections
  */
 void
-show_all (GtkButton *button,
-          gpointer   user_data);
+show_all (GtkTreeSelection *category_selection,
+          gpointer          user_data);
 
 
 #endif // CATEGORYLIST_H

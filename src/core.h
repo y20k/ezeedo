@@ -74,6 +74,7 @@ enum
 
 enum
 {
+    CATEGORYLIST_ALL,
     CATEGORYLIST_CONTEXTS,
     CATEGORYLIST_PROJECTS,
     NUMBER_OF_CATEGORYLISTS
@@ -155,12 +156,16 @@ typedef struct ezeedo_wrapper_structure
     category_container *context_list;
     category_container *project_list;
     GtkApplication     *application;
+    GtkListStore       *tasks_store;
     GtkWidget          *window;
-    GtkWidget          *todolist;
+    GtkWidget          *todo_paned;
+    GtkWidget          *categories_box;
+    GtkWidget          *todolist_box;
+    GtkWidget          *donelist_box;
+    GtkWidget          *todo_showall;
     GtkWidget          *todo_contexts;
     GtkWidget          *todo_projects;
-    GtkListStore       *tasks_store;
-    // GSettings          *settings;
+    GtkWidget          *todolist;
 }
 ezeedo_wrapper_structure;
 
