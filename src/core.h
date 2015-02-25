@@ -157,11 +157,13 @@ typedef struct ezeedo_wrapper_structure
     category_container *project_list;
     GtkApplication     *application;
     GtkListStore       *tasks_store;
+    GtkListStore       *contexts_store;
+    GtkListStore       *projects_store;
     GtkWidget          *window;
     GtkWidget          *todo_paned;
     GtkWidget          *categories_box;
-    GtkWidget          *todolist_box;
-    GtkWidget          *donelist_box;
+    GtkWidget          *todolist_box; // replace with parent = gtk_widget_get_parent (ezeedo->todolist);
+    GtkWidget          *donelist_box; // replace with parent = gtk_widget_get_parent (ezeedo->donelist);
     GtkWidget          *todo_showall;
     GtkWidget          *todo_contexts;
     GtkWidget          *todo_projects;

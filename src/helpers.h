@@ -111,6 +111,14 @@ category_singleclicked (GtkTreeSelection *category_selection,
                         gpointer          user_data);
 
 /**
+ * Shows list of tasks filtered by category type and category id
+ */
+void
+show_tasklist (ezeedo_wrapper_structure *ezeedo,
+               gint                      type,
+               gint                      id);
+
+/**
  * Resets selection for given category list
  */
 void

@@ -24,7 +24,7 @@
  * Creates widget containing tasklist
  */
 GtkWidget 
-*display_tasklist (GtkTreeModel *model)
+*build_tasklist (GtkTreeModel *model)
 {
     GtkWidget *view; 
     // GtkListStore *tasks_store;

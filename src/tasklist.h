@@ -28,7 +28,7 @@
  * Creates widget containing tasklist
  */
 GtkWidget 
-*display_tasklist (GtkTreeModel *model);
+*build_tasklist (GtkTreeModel *model);
 
 /**
  * Creates task store

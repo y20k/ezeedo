@@ -164,8 +164,10 @@ toggle_sidebar (GSimpleAction *simple,
     {
         gtk_paned_set_position (GTK_PANED(ezeedo->todo_paned),
                                 0);
-        show_all (NULL,
-                  ezeedo);
+        show_tasklist (ezeedo,
+                       CATEGORYLIST_ALL,
+                       1);
+        // TODO unref
     }
     // show sidebar
     else
@@ -423,20 +425,20 @@ void
 category_singleclicked (GtkTreeSelection *category_selection,
                         gpointer          user_data)
 {
-    ezeedo_wrapper_structure* ezeedo;
-    GtkTreeModel*             selection_model;
+    ezeedo_wrapper_structure *ezeedo;
+    GtkTreeModel             *selection_model;
     GtkTreeIter               iter;
     gint                      type;
     gint                      id;
     gint                      selected_rows;
-    GtkTreeModel*             category_filter;
- 
+    
     // get ezeedo from user data
     ezeedo = user_data;
 
     // get nunber of selected rows
     selected_rows = gtk_tree_selection_count_selected_rows (GTK_TREE_SELECTION(category_selection));
 
+    // check if any row selected
     if (selected_rows != 0)
     {
         // get input
@@ -454,56 +456,92 @@ category_singleclicked (GtkTreeSelection *category_selection,
                             CATEGORY_TYPE, &type,
                             -1);
 
-        // deselect the show all option 
+        // show tasklist
+        show_tasklist (ezeedo,
+                       type,
+                       id);
+    }
+}
+
+/**
+ * Shows list of tasks filtered by category type and category id
+ */
+void
+show_tasklist (ezeedo_wrapper_structure *ezeedo,
+               gint                      type,
+               gint                      id)
+{
+    GtkTreeModel             *category_filter;
+    GtkWidget                *new_todolist;
+
+    // set task visibility for given id and type        
+    change_task_visibility (ezeedo,
+                            type,
+                            id);
+    
+    // if show all is selected, deselect contexts and projects
+    if (type == CATEGORYLIST_ALL)
+    {
+        reset_category_selection (ezeedo,
+                                  CATEGORYLIST_PROJECTS);
+        reset_category_selection (ezeedo,
+                                  CATEGORYLIST_CONTEXTS);
+    }
+    // if a context is selected, deselect projects and show all
+    else if (type == CATEGORYLIST_CONTEXTS)
+    {
+        reset_category_selection (ezeedo,
+                                  CATEGORYLIST_PROJECTS);
         reset_category_selection (ezeedo,
                                   CATEGORYLIST_ALL);
+    }
+    // if a projects is selected, deselect contexts and show all
+    else if (type == CATEGORYLIST_PROJECTS)
+    {
+        reset_category_selection (ezeedo,
+                                  CATEGORYLIST_CONTEXTS);
+        reset_category_selection (ezeedo,
+                                  CATEGORYLIST_ALL);            
+    }
+    else
+    {
+        return;
+    }
 
-        // deselect all on other category list
-        if (type == CATEGORYLIST_CONTEXTS)
-        {
-            reset_category_selection (ezeedo,
-                                      CATEGORYLIST_PROJECTS);
-        }
-        else if (type == CATEGORYLIST_PROJECTS)
-        {
-            reset_category_selection (ezeedo,
-                                      CATEGORYLIST_CONTEXTS);
-        }
-        else
-        {
-            return;
-        }
-        
-        // mark tasks as visible
-        change_task_visibility (ezeedo,
-                                type,
-                                id);
-
-        // create tree model filter
-        category_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL(ezeedo->tasks_store),
-                                                     NULL);
+    // create tree model filter
+    category_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL(ezeedo->tasks_store),
+                                                 NULL);
+    // use unfinished tasks for filter
+    if (type == CATEGORYLIST_ALL)
+    {
+        gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER(category_filter),
+                                                  TASK_NOTCOMPLETED);
+    }
+    // use visible tasks for filter
+    else
+    {
         gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER(category_filter),
                                                   TASK_FILTERED);
-
-        // create and display todolist widget
-        GtkWidget *filter_todolist;
-        GtkWidget *parent;
-        parent = gtk_widget_get_parent (ezeedo->todolist);
-        gtk_widget_destroy (ezeedo->todolist);
-
-        filter_todolist = display_tasklist (GTK_TREE_MODEL(category_filter));
-
-        g_signal_connect (filter_todolist, "row-activated",
-                          G_CALLBACK(task_doubleclicked), ezeedo);
-
-        // add todolist to ezeedo wrapper structure
-        ezeedo->todolist = filter_todolist; 
-
-        gtk_container_add (GTK_CONTAINER(parent),
-                           filter_todolist);
-        gtk_widget_show_all (parent);
- 
     }
+    
+    // destroy current todolist
+    gtk_widget_destroy (ezeedo->todolist);
+
+    // create new todolist widget
+    new_todolist = build_tasklist (GTK_TREE_MODEL(category_filter));
+    g_signal_connect (new_todolist, "row-activated",
+                      G_CALLBACK(task_doubleclicked), ezeedo);
+
+    // add todolist to ezeedo wrapper structure
+    ezeedo->todolist = new_todolist; 
+
+    // display new todolist widget
+    gtk_container_add (GTK_CONTAINER(ezeedo->todolist_box),
+                       new_todolist);
+    gtk_widget_show_all (ezeedo->todolist_box);
+    
+    // TODO unref
+
 }
 
 

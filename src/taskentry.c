@@ -20,6 +20,7 @@
 #include "taskentry.h"
 
 #include "helpers.h"
+#include "categorylist.h"
 #include "tasklist.h"
 
 
@@ -32,8 +33,11 @@ add_task_entry (GtkEntry *entry,
 {
     ezeedo_wrapper_structure *ezeedo;
     const gchar              *input;
- 
+
+    // get ezeedo from user data
     ezeedo = user_data;
+
+    // get input from form
     input = gtk_entry_get_text (entry);
 
     // add line to textlist
@@ -69,6 +73,17 @@ add_task_entry (GtkEntry *entry,
     gtk_list_store_clear (ezeedo->tasks_store);
     fill_tasks_store (ezeedo);
 
+/*    // rebuild contexts-store
+    gtk_list_store_clear (ezeedo->contexts_store);
+    ezeedo->contexts_store = fill_category_store (ezeedo,
+                                                  ezeedo->context_list,
+                                                  CATEGORYLIST_CONTEXTS);
+    // rebuild contexts-store
+    gtk_list_store_clear (ezeedo->projects_store);
+    ezeedo->projects_store = fill_category_store (ezeedo,
+                                                  ezeedo->project_list,
+                                                  CATEGORYLIST_PROJECTS);*/
+    
     // clear text entry
     gtk_entry_set_text (entry,
                         "");

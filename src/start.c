@@ -144,7 +144,7 @@ activate (GtkApplication *app,
 
 
     // create todolist widget and add to ezeedo wrapper structure
-    todolist = display_tasklist (GTK_TREE_MODEL(filter_todo));
+    todolist = build_tasklist (GTK_TREE_MODEL(filter_todo));
     gtk_container_add (GTK_CONTAINER (ezeedo->todolist_box),
                        todolist);
     ezeedo->todolist = todolist;
@@ -155,21 +155,33 @@ activate (GtkApplication *app,
 
 
     // create donelist
-    donelist = display_tasklist (GTK_TREE_MODEL(filter_done));
+    donelist = build_tasklist (GTK_TREE_MODEL(filter_done));
     gtk_container_add (GTK_CONTAINER (ezeedo->donelist_box),
                        donelist);
 
 
-    // create showall, contexts and projects
+    // create showall
     todo_showall  = display_show_all (ezeedo);
+
+
+    // create contexts and projects
+    GtkListStore* contexts_store;
+    contexts_store = fill_category_store (ezeedo,
+                                          ezeedo->context_list,
+                                          CATEGORYLIST_CONTEXTS);
+    ezeedo->contexts_store = contexts_store;
     todo_contexts = display_category (ezeedo,
-                                      ezeedo->context_list,
-                                      "Contexts",
-                                      CATEGORYLIST_CONTEXTS);
+                                      ezeedo->contexts_store,
+                                      "Contexts");
+
+    GtkListStore* projects_store;
+    projects_store = fill_category_store (ezeedo,
+                                          ezeedo->project_list,
+                                          CATEGORYLIST_PROJECTS);
+    ezeedo->projects_store = projects_store;
     todo_projects = display_category (ezeedo,
-                                      ezeedo->project_list,
-                                      "Projects",
-                                      CATEGORYLIST_PROJECTS);
+                                      ezeedo->projects_store,
+                                      "Projects");
     gtk_widget_set_vexpand (todo_projects,
                             true);
 
@@ -498,6 +510,7 @@ GtkWidget
 {
     // define widgets
     GtkWidget *gearmenu_button;
+    GtkWidget *gearicon;
     GtkWidget *win;
     GMenu     *gearmenu;
 
@@ -528,6 +541,17 @@ GtkWidget
 
     // create gear menu 
     gearmenu_button  = gtk_menu_button_new ();
+/*    gtk_menu_button_set_direction (GTK_MENU_BUTTON(gearmenu_button),
+                                   GTK_ARROW_NONE);*/
+
+    // set gear icon
+    gearicon = gtk_image_new ();
+    // TODO try "open-menu-symbolic"
+    gtk_image_set_from_icon_name (GTK_IMAGE(gearicon),
+                                  "emblem-system-symbolic",
+                                  GTK_ICON_SIZE_MENU);
+    gtk_button_set_image (GTK_BUTTON(gearmenu_button),
+                          gearicon);
 
     // attach gearmenu to button
     gtk_menu_button_set_use_popover (GTK_MENU_BUTTON(gearmenu_button),
