@@ -46,7 +46,7 @@ load_tasklist_file (const char         *tasklist_file,
     if (fp == NULL)
     {
         char text[INFODIALOGLENGTH];
-        snprintf (text, INFODIALOGLENGTH,"Could not open %s", tasklist_file);
+        snprintf (text, INFODIALOGLENGTH,"Could not open %s for reading operation", tasklist_file);
         show_info (NULL,
                    text,
                    false);
@@ -55,7 +55,7 @@ load_tasklist_file (const char         *tasklist_file,
     else
     {
         char text[INFODIALOGLENGTH];
-        snprintf (text, INFODIALOGLENGTH,"Sucessfully opened %s", tasklist_file);
+        snprintf (text, INFODIALOGLENGTH,"Sucessfully opened %s for reading operation", tasklist_file);
         show_info (NULL,
                    text,
                    false);
@@ -212,7 +212,7 @@ save_textlist_to_file (textlist_container *textlist,
     if (fp == NULL)
     {
         char text[INFODIALOGLENGTH];
-        snprintf (text, INFODIALOGLENGTH,"Could not open %s.", tasklist_file);
+        snprintf (text, INFODIALOGLENGTH,"Could not open %s for writing operation.", tasklist_file);
         show_info (NULL,
                    text,
                    false);
@@ -221,7 +221,7 @@ save_textlist_to_file (textlist_container *textlist,
     else
     {
         char text[INFODIALOGLENGTH];
-        snprintf (text, INFODIALOGLENGTH,"Sucessfully opened %s.", tasklist_file);
+        snprintf (text, INFODIALOGLENGTH,"Sucessfully opened %s for writing operation.", tasklist_file);
         show_info (NULL,
                    text,
                    false);

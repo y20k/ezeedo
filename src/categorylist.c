@@ -181,6 +181,34 @@ GtkWidget
     // detect single-click on contexts
     g_signal_connect (category_selection, "changed",
                       G_CALLBACK(category_singleclicked), ezeedo);
-    
+
     return (view);
+}
+
+
+/**
+ * Refreshes contexts and projects display
+ */
+void
+refresh_category_display (ezeedo_wrapper_structure *ezeedo)
+{
+    // rebuild contexts-store
+/*    gtk_list_store_clear (ezeedo->contexts_store);
+    ezeedo->contexts_store = fill_category_store (ezeedo,
+                                                  ezeedo->context_list,
+                                                  CATEGORYLIST_CONTEXTS);
+    gtk_tree_view_set_model (GTK_TREE_VIEW(ezeedo->todo_contexts), 
+                             GTK_TREE_MODEL(ezeedo->contexts_store));*/
+    // g_object_unref(gtkliststore);
+
+    // rebuild contexts-store
+/*    gtk_list_store_clear (ezeedo->projects_store);
+    ezeedo->projects_store = fill_category_store (ezeedo,
+                                                  ezeedo->project_list,
+                                                  CATEGORYLIST_PROJECTS);*/
+    gtk_tree_view_set_model (GTK_TREE_VIEW(ezeedo->todo_projects), 
+                             GTK_TREE_MODEL(ezeedo->projects_store));
+    // g_object_unref(gtkliststore);
+
+    return;
 }

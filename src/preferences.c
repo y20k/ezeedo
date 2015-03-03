@@ -31,8 +31,6 @@ show_preferences_dialog (GSimpleAction *simple,
                          gpointer       user_data)
 {
     // define widgets
-    GtkApplication *app;
-    GtkWindow *win;
     GtkWidget *preferences_dialog;
     GtkWidget *preferences_content_area;
     GtkWidget *layoutgrid;
@@ -43,22 +41,21 @@ show_preferences_dialog (GSimpleAction *simple,
 
     GtkDialogFlags flags;
 
+    // get ezeedo from user data
+    ezeedo_wrapper_structure *ezeedo;
+    ezeedo = user_data;
 
     // get settings from gsettings store
     GSettings *settings;
     gchar* todotxt_file;
-
     settings = g_settings_new ("org.y20k.ezeedo");
     todotxt_file = g_settings_get_string (settings, "todo-txt-file");
+    // unref
 
-
-    // get active window
-    app = user_data;
-    win = gtk_application_get_active_window (GTK_APPLICATION(app));
 
     // create preferences dialog
     flags               = GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_USE_HEADER_BAR;
-    preferences_dialog  = gtk_dialog_new_with_buttons ("Preferences", win, flags, NULL, NULL, NULL);
+    preferences_dialog  = gtk_dialog_new_with_buttons ("Preferences", GTK_WINDOW(ezeedo->window), flags, NULL, NULL, NULL);
     gtk_window_set_icon_name    (GTK_WINDOW (preferences_dialog), EZEEDOICON);
     gtk_widget_set_size_request (GTK_WIDGET (preferences_dialog), 600, -1);
 
@@ -74,7 +71,6 @@ show_preferences_dialog (GSimpleAction *simple,
     gtk_widget_set_halign (GTK_WIDGET(select_file_label), GTK_ALIGN_START);
     gtk_widget_set_margin_start (GTK_WIDGET(select_file_label), 10);
 
- 
     current_file_entry = gtk_entry_new ();
     gtk_widget_set_sensitive (GTK_WIDGET(current_file_entry), false);
 	gtk_entry_set_text (GTK_ENTRY(current_file_entry), todotxt_file);
@@ -100,7 +96,7 @@ show_preferences_dialog (GSimpleAction *simple,
     gtk_container_add (GTK_CONTAINER (preferences_content_area), layoutgrid);
 
     // connect signals and show widget
-    g_signal_connect (select_file_button, "clicked", G_CALLBACK (select_and_save_file), GTK_APPLICATION(app));
+    g_signal_connect (select_file_button, "clicked", G_CALLBACK (select_and_save_file), ezeedo);
     g_signal_connect_swapped (preferences_dialog, "response", G_CALLBACK (gtk_widget_destroy), preferences_dialog);
 
     gtk_widget_show_all (preferences_dialog);
@@ -116,32 +112,31 @@ void
 select_and_save_file (GtkButton *button,
                       gpointer   user_data)
 {
-    GtkApplication *app;
-    app = user_data;
-
     gchar *todotxt_file;
     gchar *todotxt_file_new;
 
+    // get ezeedo from user data
+    ezeedo_wrapper_structure *ezeedo;
+    ezeedo = user_data;
+
     // Select new file name and location and get current ones 
-    todotxt_file_new = open_file_dialog (G_APPLICATION(app));
+    todotxt_file_new = open_file_dialog (G_APPLICATION(ezeedo->application));
     todotxt_file     = get_current_file_name_location ();
 
  
     // if changed save new file name and location
     if (todotxt_file_new != NULL && strcmp (todotxt_file,todotxt_file_new) != 0)
     {
-        GtkWindow *win;
-
         // sav save new file name and locatione
         save_file_name_location (todotxt_file_new);
 
-        // destroy toplevel window
-        win = gtk_application_get_active_window (GTK_APPLICATION(app));
-        save_window_position (NULL, NULL, win);
-        gtk_widget_destroy (GTK_WIDGET(win));
+        save_window_position (NULL,
+                              NULL,
+                              ezeedo);
+        gtk_widget_destroy (GTK_WIDGET(ezeedo->window));
 
         // restart app
-        activate (GTK_APPLICATION(app), NULL);
+        activate (GTK_APPLICATION(ezeedo->application), ezeedo);
     }
     else
     {

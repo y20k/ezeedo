@@ -32,7 +32,6 @@ GtkListStore
                       category_container       *category_list,
                       gint                      type);
 
-
 /**
  * Creates widget containing categorylist
  */
@@ -54,6 +53,12 @@ gboolean
 category_contains_open_tasks (ezeedo_wrapper_structure *ezeedo,
                               gint                      id,
                               gint                      type);
+
+/**
+ * Refreshes contexts and projects display
+ */
+void
+refresh_category_display (ezeedo_wrapper_structure *ezeedo);
 
 
 #endif // CATEGORYLIST_H

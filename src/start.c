@@ -112,7 +112,10 @@ activate (GtkApplication *app,
     }
 
     // parse the raw textlist and load it into the main tasklist and sort it
-    bool textlist_parsed = parse_textlist(main_textlist, main_tasklist, context_list, project_list);
+    bool textlist_parsed = parse_textlist (main_textlist,
+                                           main_tasklist,
+                                           context_list,
+                                           project_list);
     if (!textlist_parsed)
     {
         char text[INFODIALOGLENGTH];
@@ -247,7 +250,7 @@ startup (GApplication *app,
     preferences_action = g_simple_action_new ("preferences",
                                               NULL);
     g_signal_connect (preferences_action, "activate",
-                      G_CALLBACK(show_preferences_dialog), app);
+                      G_CALLBACK(show_preferences_dialog), ezeedo);
     g_action_map_add_action (G_ACTION_MAP(app),
                              G_ACTION(preferences_action));
 
@@ -292,10 +295,10 @@ GtkWidget
     // define widgets
     GtkWidget *window;
     GtkWidget *headerbar;
-    GtkWidget *gearmenu_button;
+    GtkWidget *windowmenu_button;
     GtkWidget *stack;
     GtkWidget *stackswitcher;
-    
+
     GtkWidget *todo_stack;
     GtkWidget *todo_paned;
     GtkWidget *todolist_scrollbox;
@@ -320,7 +323,7 @@ GtkWidget
     gint x;
     gint y;
     gint sidebar_size;
-    
+
     settings     = g_settings_new     ("org.y20k.ezeedo");
     width        = g_settings_get_int (settings,
                                        "main-window-width");
@@ -352,7 +355,7 @@ GtkWidget
     gtk_header_bar_set_show_close_button (GTK_HEADER_BAR(headerbar),
                                           true);
     stackswitcher   = gtk_stack_switcher_new ();
-    
+
     // create stack for todo and done
     stack = gtk_stack_new ();
 
@@ -370,7 +373,7 @@ GtkWidget
                                                     NULL);
     categories_box = gtk_box_new (GTK_ORIENTATION_VERTICAL,
                                   0);
-    
+
     // create todolist scrollbox and box for right pane
     todolist_scrollbox = gtk_scrolled_window_new (NULL,
                                                   NULL);
@@ -422,7 +425,7 @@ GtkWidget
     ezeedo->donelist_box = donelist_box;
 
     // create gear menu
-    gearmenu_button = create_gearmenu (ezeedo);
+    windowmenu_button = create_windowmenu (ezeedo);
 
     // create about action and connect about action signal
     about_action = g_simple_action_new ("about",
@@ -444,14 +447,14 @@ GtkWidget
     g_signal_connect (G_OBJECT (window), "delete-event",
                       G_CALLBACK (close_window), ezeedo);
 
-    
+
     // construct headerbar for main window
     gtk_window_set_titlebar   (GTK_WINDOW(window),
                                headerbar);
     gtk_header_bar_pack_start (GTK_HEADER_BAR(headerbar),
                                stackswitcher);
     gtk_header_bar_pack_end   (GTK_HEADER_BAR(headerbar),
-                               gearmenu_button);
+                               windowmenu_button);
 
     // add stack to main window
     gtk_container_add (GTK_CONTAINER(window),
@@ -495,8 +498,8 @@ GtkWidget
                        donelist_scrollbox);
     gtk_container_add (GTK_CONTAINER(donelist_scrollbox),
                        donelist_box);
-    gtk_container_add (GTK_CONTAINER(done_stack),
-                       archive_button);
+/*    gtk_container_add (GTK_CONTAINER(done_stack),
+                       archive_button);*/
 
     return (window); 
 }
@@ -506,25 +509,24 @@ GtkWidget
  * Creates gear menu
  */
 GtkWidget
-*create_gearmenu (ezeedo_wrapper_structure *ezeedo)
+*create_windowmenu (ezeedo_wrapper_structure *ezeedo)
 {
     // define widgets
-    GtkWidget *gearmenu_button;
-    GtkWidget *gearicon;
+    GtkWidget *windowmenu_button;
     GtkWidget *win;
-    GMenu     *gearmenu;
+    GMenu     *windowmenu;
 
     win = ezeedo->window;
-    
+
     // define actions
     GSimpleAction *toggle_action;
 
     // create gear menu
-    gearmenu = g_menu_new ();
-    g_menu_append (gearmenu,
+    windowmenu = g_menu_new ();
+    g_menu_append (windowmenu,
                    "Toggle sidebar",
                    "win.toggle_sidebar");
-    
+
     // create actions
     toggle_action = g_simple_action_new ("toggle_sidebar",
                                          NULL);
@@ -532,35 +534,26 @@ GtkWidget
                       G_CALLBACK(toggle_sidebar), ezeedo);
     g_action_map_add_action (G_ACTION_MAP(win),
                              G_ACTION(toggle_action));
-    
+
     // activate ctrl-h
     const gchar* toggle_accels[2] = { "<Ctrl>H", NULL };
     gtk_application_set_accels_for_action (GTK_APPLICATION(ezeedo->application),
                                            "win.toggle_sidebar",
                                             toggle_accels);
 
-    // create gear menu 
-    gearmenu_button  = gtk_menu_button_new ();
-/*    gtk_menu_button_set_direction (GTK_MENU_BUTTON(gearmenu_button),
-                                   GTK_ARROW_NONE);*/
+    // create window menu 
+    windowmenu_button  = gtk_menu_button_new ();
+    gtk_menu_button_set_direction (GTK_MENU_BUTTON(windowmenu_button),
+                                   GTK_ARROW_NONE);
 
-    // set gear icon
-    gearicon = gtk_image_new ();
-    // TODO try "open-menu-symbolic"
-    gtk_image_set_from_icon_name (GTK_IMAGE(gearicon),
-                                  "emblem-system-symbolic",
-                                  GTK_ICON_SIZE_MENU);
-    gtk_button_set_image (GTK_BUTTON(gearmenu_button),
-                          gearicon);
-
-    // attach gearmenu to button
-    gtk_menu_button_set_use_popover (GTK_MENU_BUTTON(gearmenu_button),
+    // attach window menu to button
+    gtk_menu_button_set_use_popover (GTK_MENU_BUTTON(windowmenu_button),
                                      true);
-    gtk_menu_button_set_menu_model (GTK_MENU_BUTTON(gearmenu_button),
-                                    G_MENU_MODEL(gearmenu)); 
+    gtk_menu_button_set_menu_model (GTK_MENU_BUTTON(windowmenu_button),
+                                    G_MENU_MODEL(windowmenu)); 
 
-    // return button with gearmenu
-    return (gearmenu_button);
+    // return button with window menu
+    return (windowmenu_button);
 }
 
 

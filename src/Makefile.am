@@ -1,8 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-
 ## Created by Anjuta
-
-
 
 AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
@@ -36,7 +33,6 @@ ezeedo_SOURCES = \
 	tasklist.h \
 	start.c \
 	start.h	
-
 
 ezeedo_LDFLAGS = \
 	-Wl,--export-dynamic

@@ -48,7 +48,7 @@ GtkWidget
  * Creates gear menu
  */
 GtkWidget
-*create_gearmenu (ezeedo_wrapper_structure *ezeedo);
+*create_windowmenu (ezeedo_wrapper_structure *ezeedo);
 
 /**
  * Shows the about window

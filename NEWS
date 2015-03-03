@@ -1,4 +1,12 @@
 -----------------------------------------------------------------------
+Ezeedo 0.2 (black country rock) - 3 March 2015
+-----------------------------------------------------------------------
+- Ezeedo now depends on GTK+ 3.14
+- replaced gear icon with lines icon
+- see Ezeedo 0.2 in action 
+  https://vimeo.com/121132369
+
+-----------------------------------------------------------------------
 Ezeedo 0.2 (black country rock) - 25 February 2015
 -----------------------------------------------------------------------
 - simplified some of the code
@@ -29,7 +37,7 @@ Ezeedo 0.2 (black country rock) - 9 January 2015
 -----------------------------------------------------------------------
 Ezeedo 0.1 (heroes) - 5 December 2014
 -----------------------------------------------------------------------
-- See Ezeedo 0.1 in action 
+- see Ezeedo 0.1 in action 
   https://vimeo.com/113704339
 
 -----------------------------------------------------------------------
@@ -40,11 +48,11 @@ Ezeedo 0.1 (heroes) - 28 November 2014
 -----------------------------------------------------------------------
 Ezeedo 0.1 (heroes) - 14 November 2014
 -----------------------------------------------------------------------
-- Converted the whole project to Anjuta and Autotools 
-- Restructured the source code
-- Deleted and resubmitted the whole project to Github
+- converted the whole project to Anjuta and Autotools 
+- restructured the source code
+- deleted and resubmitted the whole project to Github
 
 -----------------------------------------------------------------------
 Ezeedo 0.1 (heroes) - 15 October 2014
 -----------------------------------------------------------------------
-- Created this document
+- created this document
