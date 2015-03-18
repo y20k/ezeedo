@@ -55,7 +55,9 @@ enum
     TASK_PRIORITY,
     TASK_DESCRIPTION,
     TASK_CONTEXT,
+    TASK_CONTEXT_ID,
     TASK_PROJECT,
+    TASK_PROJECT_ID,
     TASK_COMPLETED,
     TASK_NOTCOMPLETED,
     TASK_FILTERED,
@@ -68,6 +70,8 @@ enum
     CATEGORY_ID,
     CATEGORY_TITLE,
     CATEGORY_TYPE,
+    CATEGORY_OPEN,
+    CATEGORY_FILTERED,
     CATEGORY_COLUMNS
 };
 
@@ -168,6 +172,7 @@ typedef struct ezeedo_wrapper_structure
     GtkWidget          *todo_contexts;
     GtkWidget          *todo_projects;
     GtkWidget          *todolist;
+    GtkWidget          *donelist;
 }
 ezeedo_wrapper_structure;
 

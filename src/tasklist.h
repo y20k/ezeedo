@@ -25,13 +25,7 @@
 
 
 /**
- * Creates widget containing tasklist
- */
-GtkWidget 
-*build_tasklist (GtkTreeModel *model);
-
-/**
- * Creates task store
+ * Creates tasks store
  */
 GtkListStore 
 *create_tasks_store (void);
@@ -51,12 +45,36 @@ add_task_to_taskstore (gint                      task_id,
                        ezeedo_wrapper_structure *ezeedo);
 
 /**
+ * Creates widget containing tasklist
+ */
+GtkWidget 
+*build_tasklist (ezeedo_wrapper_structure *ezeedo,
+                 GtkTreeModel             *model);
+
+/**
+ * Handles double-click on task
+ */
+void
+task_doubleclicked (GtkTreeView       *treeview,
+                    GtkTreePath       *path,
+                    GtkTreeViewColumn *col, 
+                    gpointer           user_data);
+
+/**
  * Changes visibility column of task list for given parameters
  */
 void
 change_task_visibility (ezeedo_wrapper_structure *ezeedo,
                         gint                      category_type,
                         gint                      category_id);
+
+/**
+ * Shows list of tasks filtered by category type and category id
+ */
+void
+show_tasklist (ezeedo_wrapper_structure *ezeedo,
+               gint                      type,
+               gint                      id);
 
 
 #endif // TASKLIST_H

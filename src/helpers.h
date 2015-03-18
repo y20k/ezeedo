@@ -23,6 +23,7 @@
 
 #include "core.h"
 
+
 /**
  * Shows line of text within dialog window or in terminal
  */
@@ -73,12 +74,10 @@ gchar
 *get_current_file_name_location (void);
 
 /**
- * Terminates application when hitting quit
+ * Saves tasklist to file
  */
 void
-quit_application (GSimpleAction *simple,
-                  GVariant      *parameter,
-                  gpointer       user_data);
+autosave (ezeedo_wrapper_structure* ezeedo);
 
 /**
  * Terminates application when closing window
@@ -89,41 +88,12 @@ close_window (GtkWidget *widget,
               gpointer   user_data);
 
 /**
- * Saves tasklist to file
+ * Terminates application when hitting quit
  */
 void
-autosave (ezeedo_wrapper_structure* ezeedo);
-
-/**
- * Handles double-click on task
- */
-void
-task_doubleclicked (GtkTreeView       *treeview,
-                    GtkTreePath       *path,
-                    GtkTreeViewColumn *col, 
-                    gpointer           user_data);
-
-/**
- * Handles single-click on category
- */
-void
-category_singleclicked (GtkTreeSelection *category_selection,
-                        gpointer          user_data);
-
-/**
- * Shows list of tasks filtered by category type and category id
- */
-void
-show_tasklist (ezeedo_wrapper_structure *ezeedo,
-               gint                      type,
-               gint                      id);
-
-/**
- * Resets selection for given category list
- */
-void
-reset_category_selection (ezeedo_wrapper_structure *ezeedo,
-                          gint                      type);
+quit_application (GSimpleAction *simple,
+                  GVariant      *parameter,
+                  gpointer       user_data);
 
 
 #endif // EZEEDOCALLBACKS_H

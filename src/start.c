@@ -18,11 +18,12 @@
 
 
 #include "start.h"
+
 #include "categorylist.h"
 #include "helpers.h"
 #include "preferences.h"
-#include "tasklist.h"
 #include "taskentry.h"
+#include "tasklist.h"
 
 
 /**
@@ -68,10 +69,8 @@ activate (GtkApplication *app,
     ezeedo->tasks_store = tasks_store;
 
 
-
     // create main window for application
     window = create_mainwindow (ezeedo);
-
 
 
     // get todotxt file from gsettings store
@@ -129,7 +128,6 @@ activate (GtkApplication *app,
     sort_tasklist (main_tasklist);
 
    
-   
     // fill tasks store
     fill_tasks_store (ezeedo);
 
@@ -147,58 +145,62 @@ activate (GtkApplication *app,
 
 
     // create todolist widget and add to ezeedo wrapper structure
-    todolist = build_tasklist (GTK_TREE_MODEL(filter_todo));
+    todolist = build_tasklist (ezeedo,
+                               GTK_TREE_MODEL(filter_todo));
     gtk_container_add (GTK_CONTAINER (ezeedo->todolist_box),
                        todolist);
     ezeedo->todolist = todolist;
+    /* use show_todolist instead
+    show_tasklist (ezeedo,
+                   CATEGORYLIST_ALL
+                   -1);*/
 
-    // detect double-click on todolist
-    g_signal_connect (todolist, "row-activated",
-                      G_CALLBACK(task_doubleclicked), ezeedo);
-
-
-    // create donelist
-    donelist = build_tasklist (GTK_TREE_MODEL(filter_done));
+    // create donelist and add to ezeedo wrapper structure
+    donelist = build_tasklist (ezeedo,
+                               GTK_TREE_MODEL(filter_done));
     gtk_container_add (GTK_CONTAINER (ezeedo->donelist_box),
                        donelist);
+    ezeedo->donelist = donelist;
 
 
-    // create showall
-    todo_showall  = display_show_all (ezeedo);
-
-
-    // create contexts and projects
-    GtkListStore* contexts_store;
-    contexts_store = fill_category_store (ezeedo,
-                                          ezeedo->context_list,
-                                          CATEGORYLIST_CONTEXTS);
-    ezeedo->contexts_store = contexts_store;
-    todo_contexts = display_category (ezeedo,
-                                      ezeedo->contexts_store,
-                                      "Contexts");
-
-    GtkListStore* projects_store;
-    projects_store = fill_category_store (ezeedo,
-                                          ezeedo->project_list,
-                                          CATEGORYLIST_PROJECTS);
-    ezeedo->projects_store = projects_store;
-    todo_projects = display_category (ezeedo,
-                                      ezeedo->projects_store,
-                                      "Projects");
-    gtk_widget_set_vexpand (todo_projects,
-                            true);
-
+    // create showall and add to ezeedo wrapper structure
+    todo_showall  = build_show_all (ezeedo);
     gtk_container_add (GTK_CONTAINER(ezeedo->categories_box),
                        todo_showall);
+    ezeedo->todo_showall  = todo_showall;
+
+
+    // create contexts and add to ezeedo wrapper structure
+    GtkTreeModel *filter_contexts;
+    filter_contexts = fill_category_store (ezeedo,
+                                           ezeedo->context_list,
+                                           CATEGORYLIST_CONTEXTS);
+    todo_contexts = build_categorylist (ezeedo,
+                                        GTK_TREE_MODEL(filter_contexts),
+                                        "Contexts");
     gtk_container_add (GTK_CONTAINER(ezeedo->categories_box),
                        todo_contexts);
+    ezeedo->todo_contexts = todo_contexts;
+
+
+    // create projects and add to ezeedo wrapper structure
+    GtkTreeModel *filter_projects;
+    filter_projects = fill_category_store (ezeedo,
+                                           ezeedo->project_list,
+                                           CATEGORYLIST_PROJECTS);
+    todo_projects = build_categorylist (ezeedo,
+                                        GTK_TREE_MODEL(filter_projects),
+                                        "Projects");
+    gtk_widget_set_vexpand (todo_projects,
+                            true);
     gtk_container_add (GTK_CONTAINER(ezeedo->categories_box),
                        todo_projects);
-
-    // add showall, contexts and projects to ezeedo wrapper structure
-    ezeedo->todo_showall  = todo_showall;
-    ezeedo->todo_contexts = todo_contexts;
     ezeedo->todo_projects = todo_projects; 
+
+
+
+    debug_category_lists (ezeedo);
+
 
 
     // show main window

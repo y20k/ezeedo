@@ -18,8 +18,8 @@
 
 
 #include "core.h"
-#include "helpers.h"
 
+#include "helpers.h"
 
 
 /**
@@ -286,8 +286,8 @@ add_task_to_tasklist (const char         *line,
     }
 
     // copy task into tasklist
-   tasklist->list[tasklist->number_of_tasks] = new_task;
-   tasklist->number_of_tasks++;
+    tasklist->list[tasklist->number_of_tasks] = new_task;
+    tasklist->number_of_tasks++;
 
    return true;
 }
@@ -477,6 +477,12 @@ check_task_context (char               *word,
             }
             new_context->title[i] = '\0';
 
+            // increment open task counter
+            if (!new_task->completed)
+            {
+                new_context->open_tasks = 1;
+            }
+
             // put new context into context list
             context_list->list[context_list->number_of_categories] = new_context;
 
@@ -491,9 +497,16 @@ check_task_context (char               *word,
         // context is already in context list
         else
         {
+            // increment open task counter
+            if (!new_task->completed)
+            {
+                context_list->list[context_id]->open_tasks++;
+            }
+
             // put context id into task
             new_task->context[new_task->number_of_contexts] = context_id;
             new_task->number_of_contexts++;
+
             return true;
         }
     }
@@ -541,9 +554,14 @@ check_task_project (char               *word,
             }
             new_project->title[i] = '\0';
 
+            // increment open task counter
+            if (!new_task->completed)
+            {
+                new_project->open_tasks = 1;
+            }
+
             // put new project into project list
-            project_list->list[project_list->number_of_categories] =
-            new_project;
+            project_list->list[project_list->number_of_categories] = new_project;
 
             // put project id into task
             new_task->project[new_task->number_of_projects] = new_project->id;
@@ -556,9 +574,16 @@ check_task_project (char               *word,
         // project is already in context list
         else
         {
+            // increment open task counter
+            if (!new_task->completed)
+            {
+                project_list->list[project_id]->open_tasks++;
+            }
+
             // put project id into task
             new_task->project[new_task->number_of_projects] = project_id;
             new_task->number_of_projects++;
+
             return true;
         }
     }

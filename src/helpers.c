@@ -18,8 +18,9 @@
 
 
 #include "helpers.h"
-#include "tasklist.h"
+
 #include "categorylist.h"
+#include "tasklist.h"
 
 
 /**
@@ -267,22 +268,16 @@ gchar
 
 
 /**
- * Terminates application when hitting quit
+ * Saves tasklist to file
  */
 void
-quit_application (GSimpleAction *simple,
-                  GVariant      *parameter,
-                  gpointer       user_data)
+autosave (ezeedo_wrapper_structure* ezeedo)
 {
-    // get ezeedo from user data
-    ezeedo_wrapper_structure *ezeedo;
-    ezeedo = user_data;
+    gchar *todotxt_file;
 
-    save_window_position (NULL,
-                          NULL,
-                          ezeedo);
+    todotxt_file = get_current_file_name_location();
 
-    g_application_quit (G_APPLICATION(ezeedo->application)); 
+    save_textlist_to_file(ezeedo->textlist, todotxt_file);
 
     return;
 }
@@ -311,290 +306,22 @@ close_window (GtkWidget *widget,
 
 
 /**
- * Saves tasklist to file
+ * Terminates application when hitting quit
  */
 void
-autosave (ezeedo_wrapper_structure* ezeedo)
+quit_application (GSimpleAction *simple,
+                  GVariant      *parameter,
+                  gpointer       user_data)
 {
-    gchar *todotxt_file;
+    // get ezeedo from user data
+    ezeedo_wrapper_structure *ezeedo;
+    ezeedo = user_data;
 
-    todotxt_file = get_current_file_name_location();
+    save_window_position (NULL,
+                          NULL,
+                          ezeedo);
 
-    save_textlist_to_file(ezeedo->textlist, todotxt_file);
+    g_application_quit (G_APPLICATION(ezeedo->application)); 
 
     return;
-}
-
-
-/**
- * Handles double-click on task
- */
-void
-task_doubleclicked (GtkTreeView       *treeview,
-                    GtkTreePath       *path,
-                    GtkTreeViewColumn *col, 
-                    gpointer           user_data)
-{
-    ezeedo_wrapper_structure *ezeedo;
-    GtkTreeIter               filter_iter;
-    GtkTreeModel             *filter_model;
-    GtkTreeIter               child_iter;
-    gchar                    *tasktitle;
-
-    // get ezeedo from user data
-    ezeedo = user_data;
-
-    // get filter model from treeview
-    filter_model = gtk_tree_view_get_model (treeview);
-
-    // get filter iter from path
-    gtk_tree_model_get_iter (filter_model,
-                             &filter_iter,
-                             path);
-
-    // get child iter from filter iter
-    gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (filter_model),
-                                                      &child_iter,
-                                                      &filter_iter);
-
-    // get task title
-    gtk_tree_model_get (filter_model,
-                        &filter_iter,
-                        TASK_DESCRIPTION, &tasktitle,
-                        -1);
-
-    // get toplevel window
-    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET(treeview));
-    if (gtk_widget_is_toplevel (toplevel))
-    {
-
-        // show selection dialog
-        GtkWidget *dialog;
-        GtkDialogFlags flags;
-        gint result = 0;
-
-        flags = GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT;
-        dialog = gtk_message_dialog_new (GTK_WINDOW(toplevel),
-                                         flags,
-                                         GTK_MESSAGE_INFO,
-                                         GTK_BUTTONS_NONE,
-                                         "Do you want to mark following taks as done?\n\"%s\"", tasktitle);
-        gtk_dialog_add_button (GTK_DIALOG (dialog),
-                               "Cancel", GTK_RESPONSE_REJECT);
-        gtk_dialog_add_button (GTK_DIALOG (dialog),
-                               "Mark Done", GTK_RESPONSE_APPLY);
-        gtk_dialog_set_default_response (GTK_DIALOG (dialog),
-                                         GTK_RESPONSE_APPLY);
-
-        result = gtk_dialog_run (GTK_DIALOG (dialog));
-
-        if (result == GTK_RESPONSE_APPLY)
-        {
-            gint id = -1;
-            gtk_tree_model_get (filter_model,
-                                &filter_iter,
-                                TASK_ID, &id,
-                                -1);
-            if (id >= 0)
-            {
-                mark_task_done (id,
-                                ezeedo->textlist,
-                                ezeedo->tasklist);
-                autosave (ezeedo);
-            }
-            gtk_list_store_set (GTK_LIST_STORE(ezeedo->tasks_store),
-                                &child_iter,
-                                TASK_COMPLETED, true,
-                                TASK_NOTCOMPLETED, false,
-                                -1);
-
-            // rebuild contexts-store
-            ezeedo->contexts_store = fill_category_store (ezeedo,
-                                                          ezeedo->context_list,
-                                                          CATEGORYLIST_CONTEXTS);
-            gtk_tree_view_set_model (GTK_TREE_VIEW(ezeedo->todo_contexts), 
-                                     GTK_TREE_MODEL(ezeedo->contexts_store));
-            // g_object_unref(gtkliststore);
-
-            // rebuild contexts-store
-            ezeedo->projects_store = fill_category_store (ezeedo,
-                                                          ezeedo->project_list,
-                                                          CATEGORYLIST_PROJECTS);
-            gtk_tree_view_set_model (GTK_TREE_VIEW(ezeedo->todo_projects), 
-                                     GTK_TREE_MODEL(ezeedo->projects_store));
-            // g_object_unref(gtkliststore);
-
-            gtk_widget_destroy (dialog);
-        }
-        else
-        {
-            gtk_widget_destroy (dialog);
-        } 
-    }
-
-}
-
-
-/**
- * Handles single-click on category
- */
-void
-category_singleclicked (GtkTreeSelection *category_selection,
-                        gpointer          user_data)
-{
-    ezeedo_wrapper_structure *ezeedo;
-    GtkTreeModel             *selection_model;
-    GtkTreeIter               iter;
-    gint                      type;
-    gint                      id;
-    gint                      selected_rows;
-    
-    // get ezeedo from user data
-    ezeedo = user_data;
-
-    // get nunber of selected rows
-    selected_rows = gtk_tree_selection_count_selected_rows (GTK_TREE_SELECTION(category_selection));
-
-    // check if any row selected
-    if (selected_rows != 0)
-    {
-        // get input
-        gtk_tree_selection_get_selected (GTK_TREE_SELECTION(category_selection),
-                                         &selection_model,
-                                         &iter);
-
-        // get category id and type
-        gtk_tree_model_get (selection_model,
-                            &iter,
-                            CATEGORY_ID, &id,
-                            -1);
-        gtk_tree_model_get (selection_model,
-                            &iter,
-                            CATEGORY_TYPE, &type,
-                            -1);
-
-        // show tasklist
-        show_tasklist (ezeedo,
-                       type,
-                       id);
-    }
-}
-
-/**
- * Shows list of tasks filtered by category type and category id
- */
-void
-show_tasklist (ezeedo_wrapper_structure *ezeedo,
-               gint                      type,
-               gint                      id)
-{
-    GtkTreeModel             *category_filter;
-    GtkWidget                *new_todolist;
-
-    // set task visibility for given id and type        
-    change_task_visibility (ezeedo,
-                            type,
-                            id);
-    
-    // if show all is selected, deselect contexts and projects
-    if (type == CATEGORYLIST_ALL)
-    {
-        reset_category_selection (ezeedo,
-                                  CATEGORYLIST_PROJECTS);
-        reset_category_selection (ezeedo,
-                                  CATEGORYLIST_CONTEXTS);
-    }
-    // if a context is selected, deselect projects and show all
-    else if (type == CATEGORYLIST_CONTEXTS)
-    {
-        reset_category_selection (ezeedo,
-                                  CATEGORYLIST_PROJECTS);
-        reset_category_selection (ezeedo,
-                                  CATEGORYLIST_ALL);
-    }
-    // if a projects is selected, deselect contexts and show all
-    else if (type == CATEGORYLIST_PROJECTS)
-    {
-        reset_category_selection (ezeedo,
-                                  CATEGORYLIST_CONTEXTS);
-        reset_category_selection (ezeedo,
-                                  CATEGORYLIST_ALL);            
-    }
-    else
-    {
-        return;
-    }
-
-    // create tree model filter
-    category_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL(ezeedo->tasks_store),
-                                                 NULL);
-    // use unfinished tasks for filter
-    if (type == CATEGORYLIST_ALL)
-    {
-        gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER(category_filter),
-                                                  TASK_NOTCOMPLETED);
-    }
-    // use visible tasks for filter
-    else
-    {
-        gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER(category_filter),
-                                                  TASK_FILTERED);
-    }
-    
-    // destroy current todolist
-    gtk_widget_destroy (ezeedo->todolist);
-
-    // create new todolist widget
-    new_todolist = build_tasklist (GTK_TREE_MODEL(category_filter));
-    g_signal_connect (new_todolist, "row-activated",
-                      G_CALLBACK(task_doubleclicked), ezeedo);
-
-    // add todolist to ezeedo wrapper structure
-    ezeedo->todolist = new_todolist; 
-
-    // display new todolist widget
-    gtk_container_add (GTK_CONTAINER(ezeedo->todolist_box),
-                       new_todolist);
-    gtk_widget_show_all (ezeedo->todolist_box);
-    
-    // TODO unref
-
-}
-
-
-/**
- * Resets selection for given category list
- */
-void
-reset_category_selection (ezeedo_wrapper_structure *ezeedo,
-                          gint                      type)
-{
-    GtkTreeView      *category_list;
-    GtkTreeSelection *category_selection;
-    gint              selected_rows;
-
-    if (type == CATEGORYLIST_CONTEXTS)
-    {
-        category_list = GTK_TREE_VIEW(ezeedo->todo_contexts);
-    }
-    else if (type == CATEGORYLIST_PROJECTS) 
-    {
-        category_list = GTK_TREE_VIEW(ezeedo->todo_projects);
-    }
-    else if (type == CATEGORYLIST_ALL) 
-    {
-        category_list = GTK_TREE_VIEW(ezeedo->todo_showall);
-    }
-    else
-    {
-        return;
-    }
-
-    category_selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(category_list));
-    selected_rows      = gtk_tree_selection_count_selected_rows (GTK_TREE_SELECTION(category_selection));
-
-    if (selected_rows != 0)
-    {
-        gtk_tree_selection_unselect_all (GTK_TREE_SELECTION(category_selection));
-    }
 }

@@ -36,7 +36,7 @@ main (int   argc,
     // create a gtk application
     gint           status;
     GtkApplication *application;
-   
+
     application = gtk_application_new ("org.y20k.ezeedo",
                                        G_APPLICATION_FLAGS_NONE);
 

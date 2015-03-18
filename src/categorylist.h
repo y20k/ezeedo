@@ -27,38 +27,58 @@
 /**
  * Fills category into given category store
  */
-GtkListStore
+GtkTreeModel
 *fill_category_store (ezeedo_wrapper_structure *ezeedo,
                       category_container       *category_list,
                       gint                      type);
 
 /**
- * Creates widget containing categorylist
- */
-GtkWidget
-*display_category (ezeedo_wrapper_structure *ezeedo,
-                   GtkListStore*             categories_store,
-                   const char               *category_name);
-
-/**
  * Creates widget containing a show all option
  */
 GtkWidget
-*display_show_all (ezeedo_wrapper_structure *ezeedo);
+*build_show_all (ezeedo_wrapper_structure *ezeedo);
 
 /**
- * Determines if given category contains open tasks
+ * Creates widget containing categorylist
  */
-gboolean
-category_contains_open_tasks (ezeedo_wrapper_structure *ezeedo,
-                              gint                      id,
-                              gint                      type);
+GtkWidget
+*build_categorylist (ezeedo_wrapper_structure *ezeedo,
+                     GtkTreeModel             *model,
+                     const char               *name);
+
+/**
+ * Handles single-click on category
+ */
+void
+category_singleclicked (GtkTreeSelection *category_selection,
+                        gpointer          user_data);
+
+/**
+ * Resets selection for given category list
+ */
+void
+reset_category_selection (ezeedo_wrapper_structure *ezeedo,
+                          gint                      type);
 
 /**
  * Refreshes contexts and projects display
  */
 void
 refresh_category_display (ezeedo_wrapper_structure *ezeedo);
+
+/**
+ * Decreases open task counter for contexts and projects
+ */
+void
+decrease_open_tasks (ezeedo_wrapper_structure *ezeedo,
+                     gint                      context_id,
+                     gint                      project_id);
+
+/**
+ * Debug
+ */
+void
+debug_category_lists (ezeedo_wrapper_structure *ezeedo);
 
 
 #endif // CATEGORYLIST_H

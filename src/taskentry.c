@@ -20,7 +20,7 @@
 #include "taskentry.h"
 
 #include "categorylist.h"
-#include "core.h"
+// #include "core.h"
 #include "helpers.h"
 #include "tasklist.h"
 
@@ -70,25 +70,9 @@ add_task_entry (GtkEntry *entry,
     // sort tasklist
     sort_tasklist (ezeedo->tasklist);
 
-    // rebuild taskstore
+    // rebuild taskstore TODO solve differently
     gtk_list_store_clear (ezeedo->tasks_store);
     fill_tasks_store (ezeedo);
-
-/*    // rebuild contexts-store
-    ezeedo->contexts_store = fill_category_store (ezeedo,
-                                                  ezeedo->context_list,
-                                                  CATEGORYLIST_CONTEXTS);
-    gtk_tree_view_set_model (GTK_TREE_VIEW(ezeedo->todo_contexts), 
-                             GTK_TREE_MODEL(ezeedo->contexts_store));
-    // g_object_unref(gtkliststore);
-
-    // rebuild contexts-store
-    ezeedo->projects_store = fill_category_store (ezeedo,
-                                                  ezeedo->project_list,
-                                                  CATEGORYLIST_PROJECTS);
-    gtk_tree_view_set_model (GTK_TREE_VIEW(ezeedo->todo_projects), 
-                             GTK_TREE_MODEL(ezeedo->projects_store));
-    // g_object_unref(gtkliststore);*/
 
     // refresh display of contexts and projects
     refresh_category_display (ezeedo);
