@@ -70,7 +70,7 @@ add_task_entry (GtkEntry *entry,
     // sort tasklist
     sort_tasklist (ezeedo->tasklist);
 
-    // rebuild taskstore TODO solve differently
+    // rebuild taskstore
     gtk_list_store_clear (ezeedo->tasks_store);
     fill_tasks_store (ezeedo);
 

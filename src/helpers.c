@@ -40,6 +40,8 @@ show_info (GtkWidget *widget,
     {
         g_print ("Ezeedo: %s\n", text);
     }
+
+    return;
 }
 
 
@@ -72,65 +74,8 @@ display_info_dialog (GtkWidget *widget,
         gtk_dialog_run (GTK_DIALOG(dialog));
         gtk_widget_destroy (dialog);
     }
-    // TODO unref
 
     return;
-}
-
-
-/**
- * Ask user for location of todo.txt file
- */
-gchar
-*open_file_dialog (GApplication *app)
-{
-    GtkWindow            *window;
-    GtkWidget            *dialog;
-    GtkFileChooserAction  action;
-    GtkFileFilter        *filter;
-    gint                  result;
-
-    // create file chooser dialog
-    action = GTK_FILE_CHOOSER_ACTION_OPEN;
-    window = gtk_application_get_active_window (GTK_APPLICATION(app));
-    dialog = gtk_file_chooser_dialog_new ("Choose Todo.txt File",
-                                          window,
-                                          action,
-                                          "Open",   GTK_RESPONSE_ACCEPT,
-                                          "Cancel", GTK_RESPONSE_CANCEL,
-                                          NULL);
-    gtk_dialog_set_default_response (GTK_DIALOG (dialog),
-                                     GTK_RESPONSE_ACCEPT);
-
- 
-    // create filter for plain text files
-    filter = gtk_file_filter_new ();
-    gtk_file_filter_set_name (filter,
-                              "Todo.txt Tasklist File");
-    gtk_file_filter_add_mime_type (filter,
-                                   "text/plain");
-    gtk_file_filter_add_pattern (filter,
-                                 "*.txt");
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dialog),
-                                 filter);
-
-    // display dialog
-    result = gtk_dialog_run (GTK_DIALOG (dialog));
-
-    // return filename or quit application
-    if (result == GTK_RESPONSE_ACCEPT)
-    {
-        gchar *filename;
-        GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
-        filename = gtk_file_chooser_get_filename (chooser);
-        gtk_widget_destroy (dialog);
-        return (filename);
-    }
-    else
-    {
-        gtk_widget_destroy (dialog);
-        return (NULL);
-    }
 }
 
 
@@ -168,7 +113,6 @@ toggle_sidebar (GSimpleAction *simple,
         show_tasklist (ezeedo,
                        CATEGORYLIST_ALL,
                        1);
-        // TODO unref
     }
     // show sidebar
     else
@@ -275,9 +219,12 @@ autosave (ezeedo_wrapper_structure* ezeedo)
 {
     gchar *todotxt_file;
 
-    todotxt_file = get_current_file_name_location();
+    todotxt_file = get_current_file_name_location ();
 
-    save_textlist_to_file(ezeedo->textlist, todotxt_file);
+    save_textlist_to_file (ezeedo->textlist,
+                           todotxt_file);
+
+    g_free (todotxt_file);
 
     return;
 }
@@ -295,11 +242,8 @@ close_window (GtkWidget *widget,
     ezeedo_wrapper_structure *ezeedo;
     ezeedo = user_data;
 
-    save_window_position (NULL,
-                          NULL,
-                          ezeedo);
-
-    g_application_quit (G_APPLICATION(ezeedo->application)); 
+    // quit application and free memory
+    terminate (ezeedo);
 
     return;
 }
@@ -317,11 +261,33 @@ quit_application (GSimpleAction *simple,
     ezeedo_wrapper_structure *ezeedo;
     ezeedo = user_data;
 
+    // quit application and free memory
+    terminate (ezeedo);
+
+    return;
+}
+
+
+/**
+ * Controlled application shutdown
+ */
+void
+terminate (ezeedo_wrapper_structure* ezeedo)
+{
+    // save window size and position
     save_window_position (NULL,
                           NULL,
                           ezeedo);
 
+    // quit g_application
     g_application_quit (G_APPLICATION(ezeedo->application)); 
 
+    // free memory for core structs
+    unload_textlist (ezeedo->textlist);
+    unload_tasklist (ezeedo->tasklist);
+    unload_category_list (ezeedo->context_list);
+    unload_category_list (ezeedo->project_list);
+
     return;
+   /* I will be back! */
 }

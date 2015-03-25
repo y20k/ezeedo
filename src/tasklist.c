@@ -206,8 +206,8 @@ GtkWidget
     gtk_tree_view_append_column (GTK_TREE_VIEW(view),
                                  col);
 
-    // destroy model automatically with view
-    // g_object_unref (tasks_store); 
+    // dereference model with view
+    g_object_unref (model); 
 
     gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW(view)),
                                  GTK_SELECTION_SINGLE);

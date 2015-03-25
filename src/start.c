@@ -127,7 +127,7 @@ activate (GtkApplication *app,
     }
     sort_tasklist (main_tasklist);
 
-   
+
     // fill tasks store
     fill_tasks_store (ezeedo);
 
@@ -198,14 +198,10 @@ activate (GtkApplication *app,
     ezeedo->todo_projects = todo_projects; 
 
 
-
-    debug_category_lists (ezeedo);
-
-
-
     // show main window
     gtk_widget_show_all (window);
 
+    return;
 }
 
 
@@ -272,6 +268,8 @@ startup (GApplication *app,
     // Set menu for the overall application
     gtk_application_set_app_menu (GTK_APPLICATION(app),
                                   G_MENU_MODEL(menu));
+
+    return;
 }
 
 
@@ -281,19 +279,6 @@ startup (GApplication *app,
 GtkWidget
 *create_mainwindow (ezeedo_wrapper_structure *ezeedo)
 {
-    // use CSS styling
-    // GFile *cssfile;
-    // GtkCssProvider *provider; 
-    // GdkDisplay *display;
-    // GdkScreen *screen;
-
-    // cssfile  = g_file_new_for_path ("ezeedo.css");
-    // provider = gtk_css_provider_new ();
-    // display  = gdk_display_get_default ();
-    // screen   = gdk_display_get_default_screen (display);
-    // gtk_style_context_add_provider_for_screen (screen, GTK_STYLE_PROVIDER (provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-    // gtk_css_provider_load_from_file (GTK_CSS_PROVIDER(provider), cssfile, NULL);
-
     // define widgets
     GtkWidget *window;
     GtkWidget *headerbar;

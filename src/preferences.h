@@ -39,6 +39,11 @@ void
 select_and_save_file (GtkButton *button,
                       gpointer   user_data);
 
+/**
+ * Ask user for location of todo.txt file
+ */
+gchar
+*open_file_dialog (GApplication *app);
 
 
 #endif // PREFERENCES_H

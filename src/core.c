@@ -160,7 +160,6 @@ parse_textlist (textlist_container *textlist,
 }
 
 
-
 /**
  * Adds line of text to textlist
  */
@@ -362,12 +361,6 @@ create_new_task (const char         *line,
             {
                 word_character_counter = 0;
             }
-
-            // task completiondate
-            // TODO
-
-            // task creationdate
-            // TODO
 
             // add word to task description
             else
@@ -904,7 +897,7 @@ unload_category_list (category_container *category_list)
         free (category_list->list[i]);
     }
 
-    free (category_list);	
+    free (category_list);
 
     return true;
 }

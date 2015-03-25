@@ -40,12 +40,6 @@ display_info_dialog (GtkWidget *widget,
                      gpointer   user_data);
 
 /**
- * Ask user for location of todo.txt file
- */
-gchar
-*open_file_dialog (GApplication *app);
-
-/**
  * Toggles visibility of sidebar
  */
 void
@@ -94,6 +88,12 @@ void
 quit_application (GSimpleAction *simple,
                   GVariant      *parameter,
                   gpointer       user_data);
+
+/**
+ * Controlled application shutdown
+ */
+void
+terminate (ezeedo_wrapper_structure* ezeedo);
 
 
 #endif // EZEEDOCALLBACKS_H

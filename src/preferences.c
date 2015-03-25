@@ -51,7 +51,7 @@ show_preferences_dialog (GSimpleAction *simple,
     gchar* todotxt_file;
     settings = g_settings_new ("org.y20k.ezeedo");
     todotxt_file = g_settings_get_string (settings, "todo-txt-file");
-    // unref
+    g_object_unref (settings);
 
 
     // create preferences dialog
@@ -74,8 +74,7 @@ show_preferences_dialog (GSimpleAction *simple,
 
     current_file_entry = gtk_entry_new ();
     gtk_widget_set_sensitive (GTK_WIDGET(current_file_entry), false);
-	gtk_entry_set_text (GTK_ENTRY(current_file_entry), todotxt_file);
-    // gtk_widget_set_halign (GTK_WIDGET(current_file_entry), GTK_ALIGN_START);
+    gtk_entry_set_text (GTK_ENTRY(current_file_entry), todotxt_file);
     gtk_widget_set_hexpand (GTK_WIDGET(current_file_entry), true);
  
     select_file_button = gtk_button_new_with_label ("Select New File");
@@ -126,14 +125,23 @@ select_and_save_file (GtkButton *button,
 
  
     // if changed save new file name and location
-    if (todotxt_file_new != NULL && strcmp (todotxt_file,todotxt_file_new) != 0)
+    if (todotxt_file_new != NULL &&
+        strcmp (todotxt_file,todotxt_file_new) != 0)
     {
-        // sav save new file name and locatione
+        // save new file name and locatione
         save_file_name_location (todotxt_file_new);
 
+        // save size and position of window
         save_window_position (NULL,
                               NULL,
                               ezeedo);
+
+        // close the parent dailog
+        GtkWidget* preferences_dialog;
+        preferences_dialog = gtk_widget_get_ancestor (GTK_WIDGET(button), GTK_TYPE_DIALOG);
+        gtk_widget_destroy (preferences_dialog);
+
+        // close main window
         gtk_widget_destroy (GTK_WIDGET(ezeedo->window));
 
         // restart app
@@ -148,4 +156,61 @@ select_and_save_file (GtkButton *button,
     }
 
     return;
+}
+
+
+/**
+ * Ask user for location of todo.txt file
+ */
+gchar
+*open_file_dialog (GApplication *app)
+{
+    GtkWindow            *window;
+    GtkWidget            *dialog;
+    GtkFileChooserAction  action;
+    GtkFileFilter        *filter;
+    gint                  result;
+
+    // create file chooser dialog
+    action = GTK_FILE_CHOOSER_ACTION_OPEN;
+    window = gtk_application_get_active_window (GTK_APPLICATION(app));
+    dialog = gtk_file_chooser_dialog_new ("Choose Todo.txt File",
+                                          window,
+                                          action,
+                                          "Open",   GTK_RESPONSE_ACCEPT,
+                                          "Cancel", GTK_RESPONSE_CANCEL,
+                                          NULL);
+    gtk_dialog_set_default_response (GTK_DIALOG (dialog),
+                                     GTK_RESPONSE_ACCEPT);
+
+ 
+    // create filter for plain text files
+    filter = gtk_file_filter_new ();
+    gtk_file_filter_set_name (filter,
+                              "Todo.txt Tasklist File");
+    gtk_file_filter_add_mime_type (filter,
+                                   "text/plain");
+    gtk_file_filter_add_pattern (filter,
+                                 "*.txt");
+    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dialog),
+                                 filter);
+
+    // display dialog
+    result = gtk_dialog_run (GTK_DIALOG (dialog));
+
+    // return filename or NULL if dialog cancelled
+    if (result == GTK_RESPONSE_ACCEPT)
+    {
+        gchar *filename;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
+        filename = gtk_file_chooser_get_filename (chooser);
+
+        gtk_widget_destroy (dialog);
+        return (filename);
+    }
+    else
+    {
+        gtk_widget_destroy (dialog);
+        return (NULL);
+    }
 }

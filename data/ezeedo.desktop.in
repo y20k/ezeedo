@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Ezeedo
+Comment=A todo.txt app for the GNOME desktop
+Exec=ezeedo
+Icon=ezeedo
+Terminal=false
+Name[en_US]=Ezeedo

@@ -58,7 +58,7 @@ main (int   argc,
                                 argv);
 
     // free memory
-    // g_object_unref (ezeedo);
+    g_object_unref (application);
 
     return status;
 }

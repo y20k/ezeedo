@@ -33,7 +33,7 @@ GtkTreeModel
 {
     GtkListStore *categories_store;
     GtkTreeIter   iter;
-//    gint          open_tasks;
+    GtkTreeModel *filter;
 
     categories_store = gtk_list_store_new (CATEGORY_COLUMNS, // total number of colums
                                            G_TYPE_INT,       // id
@@ -42,8 +42,10 @@ GtkTreeModel
                                            G_TYPE_INT,       // open tasks
                                            G_TYPE_BOOLEAN);  // filtered
 
+    // traverse category list
     for (int i = 0; i < category_list->number_of_categories; i++)
     {
+        // set filter for categories containing open tasks to true
         if (category_list->list[i]->open_tasks > 0)
         {
             // acquire an iterator 
@@ -59,6 +61,7 @@ GtkTreeModel
                                 CATEGORY_FILTERED, true,
                                 -1);
         }
+        // set filter for categories containing only done tasks to false
         else
         {
             // acquire an iterator 
@@ -76,7 +79,7 @@ GtkTreeModel
         }
     }
 
-    GtkTreeModel *filter;
+    // set filter column
     filter = gtk_tree_model_filter_new (GTK_TREE_MODEL(categories_store),
                                         NULL);
     gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER(filter),
@@ -117,7 +120,7 @@ GtkWidget
     // create iterator
     GtkTreeIter iter;
 
-    // acquire an iterator 
+    // appends new row to categories store and acquire iterator 
     gtk_list_store_append (categories_store,
                            &iter);
 
@@ -137,16 +140,14 @@ GtkWidget
     gtk_tree_view_append_column (GTK_TREE_VIEW(view),
                                  col);
 
-    // destroy model automatically with view
-    // g_object_unref (tasks_store); 
+    // dereference model with view
+    g_object_unref (categories_store); 
 
-    GtkTreeSelection *category_selection;
-    category_selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(view));
-    gtk_tree_selection_set_mode (category_selection,
-                                 GTK_SELECTION_BROWSE);
+    gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW(view)),
+                                 GTK_SELECTION_SINGLE);
 
     // detect single-click on contexts
-    g_signal_connect (category_selection, "changed",
+    g_signal_connect (gtk_tree_view_get_selection (GTK_TREE_VIEW(view)), "changed",
                       G_CALLBACK(category_singleclicked), ezeedo);
 
     return (view);
@@ -177,9 +178,9 @@ GtkWidget
     gtk_tree_view_append_column (GTK_TREE_VIEW(view),
                                  col);
 
-    // destroy model automatically with view
-    // g_object_unref (tasks_store); 
-    
+    // dereference model with view
+    g_object_unref (model); 
+
     category_selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(view));
     gtk_tree_selection_set_mode (category_selection,
                                  GTK_SELECTION_SINGLE);
@@ -227,12 +228,6 @@ category_singleclicked (GtkTreeSelection *category_selection,
                             CATEGORY_TYPE, &type,
                             -1);
 
-        char text[INFODIALOGLENGTH];
-        snprintf (text, INFODIALOGLENGTH,"You selected id %d and type %d.", id, type);
-        show_info (NULL,
-                   text,
-                   false);
-
         // show tasklist
         show_tasklist (ezeedo,
                        type,
@@ -270,7 +265,7 @@ reset_category_selection (ezeedo_wrapper_structure *ezeedo,
     }
 
     category_selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(category_list));
-    selected_rows      = gtk_tree_selection_count_selected_rows (GTK_TREE_SELECTION(category_selection));
+    selected_rows = gtk_tree_selection_count_selected_rows (GTK_TREE_SELECTION(category_selection));
 
     if (selected_rows != 0)
     {
@@ -286,18 +281,17 @@ void
 refresh_category_display (ezeedo_wrapper_structure *ezeedo)
 {
     GtkTreeModel *filter_contexts;
+    GtkTreeModel *filter_projects;
+
     gtk_list_store_clear (ezeedo->contexts_store);
     filter_contexts = fill_category_store (ezeedo,
                                            ezeedo->context_list,
                                            CATEGORYLIST_CONTEXTS);
-    
 
-    GtkTreeModel *filter_projects;
     gtk_list_store_clear (ezeedo->projects_store);
     filter_projects = fill_category_store (ezeedo,
                                            ezeedo->project_list,
                                            CATEGORYLIST_PROJECTS);
-
 
     // rebuild contexts-store
     gtk_tree_view_set_model (GTK_TREE_VIEW(ezeedo->todo_contexts), 
@@ -321,9 +315,6 @@ decrease_open_tasks (ezeedo_wrapper_structure *ezeedo,
 {
     GtkTreeIter iter;
     gboolean    valid;
-
-    printf ("DING->Context-ID: %d\n", context_id);
-    printf ("DING->Project-ID: %d\n", project_id);
 
     // decrease open tasks count in project list
     if (context_id != -1 &&
@@ -408,8 +399,6 @@ decrease_open_tasks (ezeedo_wrapper_structure *ezeedo,
         // increment iter
         valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(ezeedo->projects_store), &iter);
     }
-
-    debug_category_lists (ezeedo);
 
     return;
 }
