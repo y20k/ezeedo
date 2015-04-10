@@ -50,7 +50,7 @@ Requirements:
 +++++++++++++++++++++++
 How to install on Debian-based Systems
 - grab a .deb-package from our deb-folder on Github
-  https://github.com/y20k/ezeedo/tree/master/src
+  https://github.com/y20k/ezeedo/tree/master/deb
 - install it using you favorite software manager (e.g. Synaptic, Ubuntu Software Center)
 - alternatively install it via the commandline: dpkg -i ezeedo_xyz.deb
 
