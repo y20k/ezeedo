@@ -62,8 +62,9 @@ How to uninstall on Debian-based Systems
 + Compile             +
 +++++++++++++++++++++++
 How to compile from source (it's not rocket science!)
-1) Download the latest Version
-   wget https://github.com/y20k/ezeedo/archive/ad7a446da93ee0182b83f78c94df9f639cc03a02.zip
+1) Download the latest version
+   Latest Releases: https://github.com/y20k/ezeedo/releases
+   Current Codebase: https://github.com/y20k/ezeedo
 2) unzip and cd into the downloaded folder
 3) ./autogen.sh
 4) make 
