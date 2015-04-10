@@ -34,7 +34,6 @@
 *~
 *.anjuta
 *.cache
-*.deb
 *.db
 *.tgz
 *.zip
