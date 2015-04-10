@@ -39,13 +39,14 @@
 // maximum length for word
 #define WORDLENGTH 45
 
+// current version
+#define EZEEDOVERSION "0.2 (black country rock)"
 // location of logo
 #define EZEEDOICON "ezeedo"
 // length of info dialog message
 #define INFODIALOGLENGTH 80
 
 
-// TODO (remove) location of toto.txt file
 // #define TODOTXTFILE '/home/solaris/Documents/toto.txt'
 
 

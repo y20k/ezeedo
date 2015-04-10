@@ -53,9 +53,6 @@ activate (GtkApplication *app,
     tasklist_container *main_tasklist = calloc (1, sizeof(tasklist_container));
     ezeedo->tasklist = main_tasklist;
 
-    // initialize filtered_tasklist and add to ezeedo wrapper structure
-    // tasklist_container* filtered_tasklist = calloc (1, sizeof(tasklist_container));
-
     // initialize context_list and add to ezeedo wrapper structure
     category_container *context_list = calloc (1, sizeof(category_container));
     ezeedo->context_list = context_list;
@@ -81,14 +78,19 @@ activate (GtkApplication *app,
                                           "todo-txt-file");
     g_object_unref (settings);
 
-    // set default location and file name
+    // if not in gsettings store get todotxt file from file chooser 
     if (strlen(todotxt_file) == 0)
     {
-        todotxt_file = open_file_dialog (G_APPLICATION(app));
+        todotxt_file = open_file_dialog (G_APPLICATION(ezeedo->application));
         // quit application if open file dialog returns NULL
         if (todotxt_file == NULL)
         {
-            g_application_quit (G_APPLICATION(app));
+            char text[INFODIALOGLENGTH];
+            snprintf (text, INFODIALOGLENGTH,"File chooser returned NULL.");
+            show_info (GTK_WIDGET(window),
+                       text,
+                       true);
+            terminate (ezeedo);
         }
         else
         {
@@ -97,8 +99,8 @@ activate (GtkApplication *app,
     }
 
     // open todo.txt file and load it line by line into a raw text list
-    bool file_loaded = load_tasklist_file (todotxt_file,
-                                           main_textlist);
+    gboolean file_loaded = load_tasklist_file (todotxt_file,
+                                               main_textlist);
     if (!file_loaded)
     {
         char text[INFODIALOGLENGTH];
@@ -107,14 +109,14 @@ activate (GtkApplication *app,
                    text,
                    true);
         select_and_save_file (NULL,
-                              GTK_APPLICATION(app));
+                              GTK_APPLICATION(ezeedo->application));
     }
 
     // parse the raw textlist and load it into the main tasklist and sort it
-    bool textlist_parsed = parse_textlist (main_textlist,
-                                           main_tasklist,
-                                           context_list,
-                                           project_list);
+    gboolean textlist_parsed = parse_textlist (main_textlist,
+                                               main_tasklist,
+                                               context_list,
+                                               project_list);
     if (!textlist_parsed)
     {
         char text[INFODIALOGLENGTH];
@@ -123,7 +125,7 @@ activate (GtkApplication *app,
                    text,
                    true);
         select_and_save_file (NULL,
-                              GTK_APPLICATION(app));
+                              GTK_APPLICATION(ezeedo->application));
     }
     sort_tasklist (main_tasklist);
 
@@ -150,7 +152,7 @@ activate (GtkApplication *app,
     gtk_container_add (GTK_CONTAINER (ezeedo->todolist_box),
                        todolist);
     ezeedo->todolist = todolist;
-    /* use show_todolist instead
+    /* note to self: better use show_tasklist
     show_tasklist (ezeedo,
                    CATEGORYLIST_ALL
                    -1);*/
@@ -200,6 +202,7 @@ activate (GtkApplication *app,
 
     // show main window
     gtk_widget_show_all (window);
+
 
     return;
 }
@@ -411,7 +414,7 @@ GtkWidget
     ezeedo->todolist_box = todolist_box;
     ezeedo->donelist_box = donelist_box;
 
-    // create gear menu
+    // create window menu
     windowmenu_button = create_windowmenu (ezeedo);
 
     // create about action and connect about action signal
@@ -485,15 +488,13 @@ GtkWidget
                        donelist_scrollbox);
     gtk_container_add (GTK_CONTAINER(donelist_scrollbox),
                        donelist_box);
-/*    gtk_container_add (GTK_CONTAINER(done_stack),
-                       archive_button);*/
 
     return (window); 
 }
 
 
 /**
- * Creates gear menu
+ * Creates window menu
  */
 GtkWidget
 *create_windowmenu (ezeedo_wrapper_structure *ezeedo)
@@ -544,8 +545,6 @@ GtkWidget
 }
 
 
-
-
 /**
  * Shows the about window
  */
@@ -554,41 +553,24 @@ show_about_window (GSimpleAction *simple,
                    GVariant      *parameter,
                    gpointer       user_data)
 {
-    // define widgets
-    GtkWidget *about_dialog;
+    GtkWidget *window;
+    window = user_data;
 
-    // create about dialog
-    about_dialog = gtk_about_dialog_new ();
-
-    // define widget content
+    // define authors and documenters
     const gchar *authors[] = {"Ezeedo Team", NULL};
     const gchar *documenters[] = {"Ezeedo Team", NULL};
 
-    gtk_about_dialog_set_program_name   (GTK_ABOUT_DIALOG (about_dialog),
-                                         "Ezeedo");
-    gtk_about_dialog_set_license_type   (GTK_ABOUT_DIALOG (about_dialog),
-                                         GTK_LICENSE_MIT_X11);
-    gtk_about_dialog_set_version        (GTK_ABOUT_DIALOG (about_dialog),
-                                         "0.2 (black country rock)");
-    gtk_about_dialog_set_comments       (GTK_ABOUT_DIALOG (about_dialog),
-                                         "A todo.txt app for the GNOME desktop");
-    gtk_about_dialog_set_logo_icon_name (GTK_ABOUT_DIALOG (about_dialog),
-                                         EZEEDOICON);
-    gtk_about_dialog_set_authors        (GTK_ABOUT_DIALOG (about_dialog),
-                                         authors);
-    gtk_about_dialog_set_documenters    (GTK_ABOUT_DIALOG (about_dialog),
-                                         documenters);
-    gtk_about_dialog_set_website_label  (GTK_ABOUT_DIALOG (about_dialog),
-                                         "Ezeedo Website");
-    gtk_about_dialog_set_website        (GTK_ABOUT_DIALOG (about_dialog),
-                                         "http://www.y20k.org/ezeedo");
-    gtk_window_set_title                (GTK_WINDOW (about_dialog),
-                                         "");
-
-    // connect signals and show widget 
-    g_signal_connect_swapped (GTK_DIALOG(about_dialog), "response",
-                              G_CALLBACK (gtk_widget_destroy), GTK_DIALOG (about_dialog));
-    gtk_widget_show (about_dialog); 
+    gtk_show_about_dialog (GTK_WINDOW (window),
+                           "program-name",   "Ezeedo",
+                           "comments",       "A todo.txt app for the GNOME desktop",
+                           "logo-icon-name", EZEEDOICON,
+                           "license-type",   GTK_LICENSE_MIT_X11,
+                           "version",        EZEEDOVERSION,
+                           "authors",        authors,
+                           "documenters",    documenters,
+                           "website",        "http://www.y20k.org/ezeedo/",
+                           "website_label",  "Ezeedo Website",
+                           NULL);
 
     return;
 }

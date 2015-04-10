@@ -232,8 +232,6 @@ save_textlist_to_file (textlist_container *textlist,
         // skip empty lines
         if (textlist->line[i]->raw_line[0] != '\0')
         {
-            // for (int j = 0; j < textlist->line[i]->line_length; j++)
-            // TODO
             // ensure that no zeros are written
             int j = 0;
             while (textlist->line[i]->raw_line[j] != '\0' &&

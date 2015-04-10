@@ -62,6 +62,7 @@ fill_tasks_store (ezeedo_wrapper_structure *ezeedo)
                                ezeedo);
     }
 
+    return;
 }
 
 
@@ -331,8 +332,9 @@ task_doubleclicked (GtkTreeView       *treeview,
     else
     {
         gtk_widget_destroy (dialog);
-    } 
+    }
 
+    return;
 }
 
 
@@ -390,6 +392,7 @@ change_task_visibility (ezeedo_wrapper_structure *ezeedo,
         valid = gtk_tree_model_iter_next (GTK_TREE_MODEL(ezeedo->tasks_store),
                                           &iter);
     }
+
     return;
 }
 
@@ -469,7 +472,6 @@ show_tasklist (ezeedo_wrapper_structure *ezeedo,
     gtk_container_add (GTK_CONTAINER(ezeedo->todolist_box),
                        new_todolist);
     gtk_widget_show_all (ezeedo->todolist_box);
-    
-    // TODO unref
 
+    return;
 }

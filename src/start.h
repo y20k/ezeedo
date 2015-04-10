@@ -45,7 +45,7 @@ GtkWidget
 *create_mainwindow (ezeedo_wrapper_structure *ezeedo);
 
 /**
- * Creates gear menu
+ * Creates window menu
  */
 GtkWidget
 *create_windowmenu (ezeedo_wrapper_structure *ezeedo);

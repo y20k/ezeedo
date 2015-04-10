@@ -31,7 +31,6 @@ main (int   argc,
 
     // create convenience wrapper structure for important elements
     ezeedo_wrapper_structure *ezeedo = calloc (1, sizeof(ezeedo_wrapper_structure));
-    // TODO free ezeedo structure
 
     // create a gtk application
     gint           status;
@@ -42,7 +41,7 @@ main (int   argc,
 
     // add application to ezeedo wrapper structure
     ezeedo->application = application;
-    
+
     g_signal_connect (application,
                       "activate",
                       G_CALLBACK (activate),

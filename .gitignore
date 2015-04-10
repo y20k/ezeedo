@@ -30,15 +30,17 @@
 
 # Project-specific
 \#*
-.anjuta
 .DS_Store
 *~
 *.anjuta
 *.cache
+*.deb
 *.db
+*.tgz
 *.zip
-aclocal.m4
+*.m4
 compile
+config.h.in
 configure
 create_debian_package.txt
 Debug
@@ -46,3 +48,5 @@ depcomp
 install-sh
 Makefile.in
 missing
+todo.txt
+

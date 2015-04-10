@@ -1,22 +1,102 @@
 -----------------------------------------------------------------------
 Ezeedo
 -----------------------------------------------------------------------
+
 A todo.txt app for the GNOME desktop
 
-Learn more about Ezeedo on
-http://www.y20k.org/ezeedo/
++++++++++++++++++++++++
++ General             +
++++++++++++++++++++++++
+Ezeedo reads and writes plain text files using the todo.txt format. It will display tasks sorted by priority and alphabetically. Ezeedo tries to interfere with the original file as little as possible. Sorting tasks will not affect the original file. New tasks will be added after the last line.
 
-Please note:
-You can technically install Ezeedo. But you should refrain from doing so. Ezeedo is work in progress. 
+Current version: 
+- v2.0 (black country rock)
 
-Watch the install canary... As long as it does not fly. Please do not install Ezeedo.
+Requirements:
+- GTK+ 3.14 (Ezeedo runs on Ubuntu GNOME 15.04)
 
-        .---.
-       /   6_6
-       \_  (__\
-       //   \\
-      ((     ))
-=======""===""===============
-         |||
-         |||
-         '|'
++++++++++++++++++++++++
++ Learn more          +
++++++++++++++++++++++++
+- Homepage and GitHub-Page
+  http://www.y20k.org/ezeedo/
+  https://github.com/y20k/ezeedo
+- The Todo.txt Format
+  https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format
+
++++++++++++++++++++++++
++ How to use Ezeedo   +
++++++++++++++++++++++++
+- Select an existing todo.txt plain text file at first launch
+- Open the app's preferences to change the tasklist source thereafter
+- Use the input field to add a new task - should be pretty obvious
+- Double-click on a tast to mark it done
+- Use the left sidebar to filter tasks by project or context
+- Use the window menu (three lines) to hide the sidebar
+- Keyboard-Shortcuts
+  CTRL-Q - Quit the application
+  CTRL-H - Hides the sidebar
+
++++++++++++++++++++++++
++ You can not yet ... +
++++++++++++++++++++++++
+- Create a new empty tasklist
+- Change task description, priority etc.
+- Delete a task
+- Undo marking a task as done
+
++++++++++++++++++++++++
++ Install             +
++++++++++++++++++++++++
+How to install on Debian-based Systems
+- grab a .deb-package from our deb-folder on Github
+  https://github.com/y20k/ezeedo/tree/master/src
+- install it using you favorite software manager (e.g. Synaptic, Ubuntu Software Center)
+- alternatively install it via the commandline: dpkg -i ezeedo_xyz.deb
+
+How to uninstall on Debian-based Systems
+- Synaptic makes it easy to uninstall .deb-packages
+- if you prefer the commandline: dpkg -r ezeedo_xyz.deb
+
++++++++++++++++++++++++
++ Compile             +
++++++++++++++++++++++++
+How to compile from source (it's not rocket science!)
+1) Download the latest Version
+   wget https://github.com/y20k/ezeedo/archive/ad7a446da93ee0182b83f78c94df9f639cc03a02.zip
+2) unzip and cd into the downloaded folder
+3) ./autogen.sh
+4) make 
+5) sudo make install
+6) keep the downloaded folder for an easy uninstall
+
+You may need you need to install autotools and the GTK+ dev files
+- sudo apt-get install automake
+- sudo apt-get install libgtk-3-dev
+
+How to uninstall a version that was compiled from source
+1) cd into the previously downloaded folder
+2) ./autogen.sh
+3) make 
+4) sudo make uninstall
+5) sudo make clean
+
++++++++++++++++++++++++
++ The Install Canary  +
++++++++++++++++++++++++
+Ezeedo just entered beta. It is not finished yet, but you can install it. Watch the install canary... It finally flies(*) 
+
+                 .--.
+                /   6\_
+                \   ___\
+________________/   \_______________
+\_____         /     \        _____/
+   \______     |     |     ______/
+       \_____  \     / ______/
+           \___/\   /\___/
+                /A A\
+               /     \
+               `"==="`
+
+(*) before it just sat there
+https://github.com/y20k/ezeedo/blob/ad7a446da93ee0182b83f78c94df9f639cc03a02/README

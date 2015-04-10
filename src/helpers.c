@@ -288,6 +288,14 @@ terminate (ezeedo_wrapper_structure* ezeedo)
     unload_category_list (ezeedo->context_list);
     unload_category_list (ezeedo->project_list);
 
+    // unref list stores
+    g_object_unref (ezeedo->tasks_store);
+    g_object_unref (ezeedo->contexts_store);
+    g_object_unref (ezeedo->projects_store);
+
+    // free ezeedo wrapper structure
+    g_free (ezeedo);
+
     return;
    /* I will be back! */
 }
