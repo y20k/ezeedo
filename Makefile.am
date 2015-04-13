@@ -8,6 +8,7 @@ dist_doc_DATA = \
     README \
     COPYING \
     AUTHORS \
+    LICENSE \
     ChangeLog \
     INSTALL \
     NEWS
