@@ -1,0 +1,6 @@
+-----------------------------------------------------------------------
+About the /deb folder
+-----------------------------------------------------------------------
+
+The /deb-folder contains the latest install packages for Debian. If you downloaded this folder as part of an archive from the releases page, you might want to check out the online version https://github.com/y20k/ezeedo/tree/master/deb as well as the subdirectory /current for the most up-to-date releases. For install instructions please refer to the
+README file.
