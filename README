@@ -10,7 +10,7 @@ A todo.txt app for the GNOME desktop
 Ezeedo reads and writes plain text files using the todo.txt format. It will display tasks sorted by priority and alphabetically. Ezeedo tries to interfere with the original file as little as possible. Sorting tasks will not affect the original file. New tasks will be added after the last line.
 
 Current version: 
-- v2.0 (black country rock)
+- v0.2 (black country rock)
 
 Requirements:
 - GTK+ 3.14 (Ezeedo runs on Ubuntu GNOME 15.04)
